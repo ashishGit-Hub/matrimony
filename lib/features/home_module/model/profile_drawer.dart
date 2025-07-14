@@ -4,7 +4,7 @@ import 'package:matrimonal_app/features/home_module/view_model/logout_service.da
 import 'package:matrimonal_app/features/login_module/view/login_screen.dart';
 import 'package:matrimonal_app/features/profile_module/view/profile_screen.dart';
 import 'package:matrimonal_app/features/register_module/view/basic_detils_screen.dart';
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 
 import '../view/user_detail_screen.dart';
 

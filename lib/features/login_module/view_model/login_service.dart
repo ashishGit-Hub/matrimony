@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import '../../../services/sharepref.dart';
+import '../../../utils/sharepref.dart';
 import '../../register_module/model/registration_response.dart';
 import '../model/login_model.dart';
 import 'package:http/http.dart' as http;
@@ -38,8 +38,8 @@ class LoginService {
 
       final data = RegistrationResponse.fromJson(json);
 
-      if (data.status && data.token != null && data.token!.isNotEmpty) {
-        await SharedPrefs.saveToken(data.token!);
+      if (data.status && data.token != null && data.token.isNotEmpty) {
+        await SharedPrefs.saveToken(data.token);
         print('✅ Token Saved');
       }
 

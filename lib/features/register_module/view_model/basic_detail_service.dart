@@ -3,7 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:matrimonal_app/features/register_module/model/registration_response.dart';
 
 
-import '../../../services/sharepref.dart';
+import '../../../utils/sharepref.dart';
 
 class BasicDetailService {
   Future<RegistrationResponse> submitBasicDetails({

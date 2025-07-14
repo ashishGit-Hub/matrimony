@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:matrimonal_app/core/constant/color_constant.dart';
 import 'package:matrimonal_app/features/match_module/model/match_model.dart';
 import 'package:matrimonal_app/features/match_module/view_model/match_service.dart';
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 
 import 'profiledetailscreen.dart';
 

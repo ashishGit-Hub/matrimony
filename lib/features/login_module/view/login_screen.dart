@@ -7,7 +7,7 @@ import 'package:matrimonal_app/features/home_module/view/home_screen.dart';
 import 'package:matrimonal_app/features/login_module/model/login_model.dart';
 import 'package:matrimonal_app/features/login_module/view_model/login_service.dart';
 import 'package:matrimonal_app/features/register_module/view/register_screen.dart';
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 
 class LoginScreen extends StatefulWidget {
   @override

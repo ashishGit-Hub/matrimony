@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 import '../../home_module/view/home_screen.dart';
 
 class FinalStepScreen extends StatefulWidget {

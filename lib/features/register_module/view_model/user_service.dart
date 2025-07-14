@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:matrimonal_app/features/register_module/model/registration_response.dart';
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {

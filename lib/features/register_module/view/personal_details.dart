@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonal_app/features/register_module/view/proffesionaldetail_screen.dart';
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../model/register_model.dart';
 import '../view_model/personal_detail_service.dart';

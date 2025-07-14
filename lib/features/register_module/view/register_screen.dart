@@ -7,7 +7,7 @@ import 'package:matrimonal_app/features/register_module/model/register_model.dar
 import 'package:matrimonal_app/features/register_module/view/basic_detils_screen.dart';
 import 'package:matrimonal_app/features/register_module/view_model/register_service.dart';
 import 'package:matrimonal_app/features/register_module/view_model/profile_service.dart';
-import 'package:matrimonal_app/services/sharepref.dart';
+import 'package:matrimonal_app/utils/sharepref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/registration_response.dart';
