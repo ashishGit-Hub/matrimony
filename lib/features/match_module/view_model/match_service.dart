@@ -1,0 +1,107 @@
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import '../model/match_model.dart';
+
+class MatchService {
+  static Future<MatchResponse?> fetchMatches({
+    required String stateId,
+    required String cityId,
+    String? ageMin,
+    String? ageMax,
+    String? token,
+  }) async {
+    try {
+      final uri = Uri.parse("https://matrimony.sqcreation.site/api/get/matches")
+          .replace(
+        queryParameters: {
+          "state": stateId,
+          "city": cityId,
+          "age_min": ageMin ?? "",
+          "age_max": ageMax ?? "",
+        },
+      );
+
+      final headers = <String, String>{
+        if (token != null) 'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      };
+
+      print("🔼 Requesting: $uri");
+      print("🔐 Headers: $headers");
+
+      final response = await http.get(uri, headers: headers);
+
+      print("🔽 Status Code: ${response.statusCode}");
+      print("🔽 Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final jsonMap = json.decode(response.body);
+        return MatchResponse.fromJson(jsonMap);
+      } else {
+        return null;
+      }
+    } catch (e) {
+      print("❌ Exception in fetchMatches: $e");
+      return null;
+    }
+  }
+  static Future<bool> updateLikeUser({
+    required String token,
+    required String likedId,
+  }) async {
+    final url = Uri.parse("https://matrimony.sqcreation.site/api/update/like-user");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'liked_id': likedId, // ✅ MUST be 'liked_id'
+        }),
+      );
+
+      print("🔽 Status Code: ${response.statusCode}");
+      print("🔽 Body: ${response.body}");
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['status'] == true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      print("❌ Exception: $e");
+      return false;
+    }
+  }
+  static Future<MatchModel?> getProfileDetails(String userId, String token) async {
+    final url = Uri.parse("https://matrimony.sqcreation.site/api/get/matches/details/$userId");
+
+    try {
+      final response = await http.get(url, headers: {
+        'Authorization': 'Bearer $token',
+        'Accept': 'application/json',
+      });
+
+      if (response.statusCode == 200) {
+        final body = jsonDecode(response.body);
+        if (body['status'] == true && body['data'] != null) {
+          return MatchModel.fromJson(body['data']);
+        }
+      }
+      return null;
+    } catch (e) {
+      print("❌ Error fetching profile: $e");
+      return null;
+    }
+  }
+
+
+
+}
+
+
