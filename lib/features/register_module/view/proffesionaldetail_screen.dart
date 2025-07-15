@@ -1,18 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:matrimonal_app/features/register_module/model/proffesional_detail_model.dart';
-import 'package:matrimonal_app/features/register_module/model/registration_response.dart' as reg;
 import 'package:matrimonal_app/features/register_module/view/about_yourself_screen.dart';
 import 'package:matrimonal_app/features/register_module/view_model/proffesional_details_service.dart';
-import 'package:matrimonal_app/features/register_module/view_model/user_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../../../services/user_service.dart';
+
 class ProfessionalDetailsScreen extends StatefulWidget {
+  const ProfessionalDetailsScreen({super.key});
+
   @override
-  _ProfessionalDetailsScreenState createState() => _ProfessionalDetailsScreenState();
+  ProfessionalDetailsScreenState createState() => ProfessionalDetailsScreenState();
 }
 
-class _ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
+class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
   Education? selectedEducation;
   JobType? selectedJobType;
   CompanyType? selectedCompanyType;

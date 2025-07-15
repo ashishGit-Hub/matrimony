@@ -3,12 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrimonal_app/features/register_module/view_model/about_service.dart';
-import 'package:matrimonal_app/features/register_module/view_model/user_service.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../services/user_service.dart';
 import 'final_registration_screen.dart';
 
 class AboutYourselfScreen extends StatefulWidget {
+  const AboutYourselfScreen({super.key});
+
   @override
   State<AboutYourselfScreen> createState() => _AboutYourselfScreenState();
 }

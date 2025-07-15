@@ -6,6 +6,8 @@ import 'package:matrimonal_app/features/register_module/view/releigon_details.da
 import 'package:matrimonal_app/features/register_module/view_model/basic_detail_service.dart';
 
 class BasicDetailsScreen extends StatefulWidget {
+  const BasicDetailsScreen({super.key});
+
   @override
   State<BasicDetailsScreen> createState() => _BasicDetailsScreenState();
 }

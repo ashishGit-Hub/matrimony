@@ -17,13 +17,6 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     _initializePreferences();
-
-    // Timer(Duration(seconds: 3), () {
-    //   Navigator.pushReplacement(
-    //     context,
-    //     MaterialPageRoute(builder: (context) => OnboardingScreen()),
-    //   );
-    // });
   }
 
 

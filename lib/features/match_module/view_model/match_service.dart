@@ -1,5 +1,10 @@
 import 'dart:convert';
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:matrimonal_app/utils/app_constants.dart';
+
 import '../model/match_model.dart';
 
 class MatchService {
@@ -11,28 +16,25 @@ class MatchService {
     String? token,
   }) async {
     try {
-      final uri = Uri.parse("https://matrimony.sqcreation.site/api/get/matches")
-          .replace(
-        queryParameters: {
-          "state": stateId,
-          "city": cityId,
-          "age_min": ageMin ?? "",
-          "age_max": ageMax ?? "",
-        },
-      );
+      final uri =
+          Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.getMatches}');
 
       final headers = <String, String>{
         if (token != null) 'Authorization': 'Bearer $token',
         'Accept': 'application/json',
       };
 
-      print("🔼 Requesting: $uri");
-      print("🔐 Headers: $headers");
+      if (kDebugMode) {
+        log("🔼 Requesting: $uri");
+        log("🔐 Headers: $headers");
+      }
 
       final response = await http.get(uri, headers: headers);
 
-      print("🔽 Status Code: ${response.statusCode}");
-      print("🔽 Body: ${response.body}");
+      if (kDebugMode) {
+        print("🔽 Status Code: ${response.statusCode}");
+        print("🔽 Body: ${response.body}");
+      }
 
       if (response.statusCode == 200) {
         final jsonMap = json.decode(response.body);
@@ -41,15 +43,19 @@ class MatchService {
         return null;
       }
     } catch (e) {
-      print("❌ Exception in fetchMatches: $e");
+      if (kDebugMode) {
+        log("❌ Exception in fetchMatches: $e");
+      }
       return null;
     }
   }
+
   static Future<bool> updateLikeUser({
     required String token,
     required String likedId,
   }) async {
-    final url = Uri.parse("https://matrimony.sqcreation.site/api/update/like-user");
+    final url =
+        Uri.parse("https://matrimony.sqcreation.site/api/update/like-user");
 
     try {
       final response = await http.post(
@@ -78,8 +84,11 @@ class MatchService {
       return false;
     }
   }
-  static Future<MatchModel?> getProfileDetails(String userId, String token) async {
-    final url = Uri.parse("https://matrimony.sqcreation.site/api/get/matches/details/$userId");
+
+  static Future<MatchModel?> getProfileDetails(
+      String userId, String token) async {
+    final url = Uri.parse(
+        "https://matrimony.sqcreation.site/api/get/matches/details/$userId");
 
     try {
       final response = await http.get(url, headers: {
@@ -99,9 +108,4 @@ class MatchService {
       return null;
     }
   }
-
-
-
 }
-
-

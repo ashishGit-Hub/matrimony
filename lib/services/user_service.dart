@@ -1,22 +1,31 @@
 import 'dart:convert';
+import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonal_app/features/register_module/model/registration_response.dart';
+import 'package:matrimonal_app/utils/app_constants.dart';
+import 'package:matrimonal_app/utils/preferences.dart';
 import 'package:matrimonal_app/utils/sharepref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class UserService {
   static Future<User?> fetchUserDetails() async {
-    final token = await SharedPrefs.getToken();
-    final url = Uri.parse('http://matrimony.sqcreation.site/api/get-user');
+    final token = Preferences.getString(AppConstants.token, defaultValue: '');
+    final url = Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.getUser}');
 
     try {
       final response = await http.get(
         url,
         headers: {
-          'Authorization': token ?? '',
+          'Authorization': 'Bearer $token',
           'Accept': 'application/json',
         },
       );
+
+      if(kDebugMode){
+        log('API Url: $url');
+        log("Headers: ${response.body}");
+      }
 
       if (response.statusCode == 200) {
         final jsonData = jsonDecode(response.body);
@@ -28,11 +37,15 @@ class UserService {
 
         return user;
       } else {
-        print('❌ Error: ${response.statusCode}');
+        if (kDebugMode) {
+          print('❌ Error: ${response.statusCode}');
+        }
         return null;
       }
     } catch (e) {
-      print('❌ Exception: $e');
+      if (kDebugMode) {
+        print('❌ Exception: $e');
+      }
       return null;
     }
   }

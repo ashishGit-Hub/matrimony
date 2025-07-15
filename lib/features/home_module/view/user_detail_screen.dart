@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonal_app/features/register_module/model/registration_response.dart';
-import 'package:matrimonal_app/features/register_module/view_model/user_service.dart';
+
+import '../../../services/user_service.dart';
 
 class ViewProfileScreen extends StatefulWidget {
+  const ViewProfileScreen({super.key});
+
   @override
   State<ViewProfileScreen> createState() => _ViewProfileScreenState();
 }
