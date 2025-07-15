@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:matrimonal_app/utils/app_constants.dart';
+import 'package:matrimonal_app/utils/preferences.dart';
 import 'package:matrimonal_app/utils/sharepref.dart';
 
 class LogoutService {
@@ -7,24 +10,25 @@ class LogoutService {
     const String url = 'http://matrimony.sqcreation.site/api/logout';
 
     try {
-      final token = await SharedPrefs.getToken();
-      if (token == null || token.isEmpty) {
+      final token = Preferences.getString(AppConstants.token, defaultValue: "");
+      if (token.isEmpty) {
         throw Exception("Token not found in SharedPreferences");
       }
 
-      final rawToken = token.replaceAll('Bearer ', ''); // ✅ Remove double Bearer
 
       final response = await http.post(
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': 'Bearer $rawToken',
+          'Authorization': 'Bearer $token',
         },
       );
 
-      print('🔐 Sending Token: Bearer $rawToken');
-      print('🔽 Status Code: ${response.statusCode}');
-      print('🔽 Response: ${response.body}');
+      if(kDebugMode){
+        print('🔐 Sending Token: $token');
+        print('🔽 Status Code: ${response.statusCode}');
+        print('🔽 Response: ${response.body}');
+      }
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);

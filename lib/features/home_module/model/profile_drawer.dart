@@ -2,9 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:matrimonal_app/features/home_module/view/change_passwordscreen.dart';
 import 'package:matrimonal_app/features/home_module/view_model/logout_service.dart';
 import 'package:matrimonal_app/features/login_module/view/login_screen.dart';
-import 'package:matrimonal_app/features/profile_module/view/profile_screen.dart';
-import 'package:matrimonal_app/features/register_module/view/basic_detils_screen.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonal_app/utils/preferences.dart';
 
 import '../view/user_detail_screen.dart';
 
@@ -151,31 +149,15 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                                 },
                               ),
                               TextButton(
-                                child: const Text("Logout", style: TextStyle(color: Colors.red)),
-                                onPressed: () async {
-                                  Navigator.of(dialogContext).pop(); // Close dialog
-
-                                  final result = await LogoutService.logoutUser();
-
-                                  // Delay slightly to ensure dialog is fully closed
-                                  await Future.delayed(const Duration(milliseconds: 200));
-
-                                  if (!mounted) return;
-
-                                  if (result['status']) {
-                                    await SharedPrefs.clearToken();
-
-                                    // ✅ Do navigation safely
-                                    Navigator.of(context).pushAndRemoveUntil(
-                                      MaterialPageRoute(builder: (_) =>  LoginScreen()),
+                                onPressed: () {
+                                    // Navigator.of(dialogContext).pop(); // Close dialog first
+                                    Preferences.clearSharPreference();
+                                    Navigator.of(dialogContext).pushAndRemoveUntil(
+                                      MaterialPageRoute(builder: (_) => LoginScreen()),
                                           (route) => false,
                                     );
-                                  } else {
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(content: Text(result['message'])),
-                                    );
-                                  }
-                                },
+                                  },
+                                child: const Text("Logout", style: TextStyle(color: Colors.red)),
                               ),
                             ],
                           );
@@ -184,9 +166,6 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                     });
                   },
                 ),
-
-
-
               ],
             ),
           ),

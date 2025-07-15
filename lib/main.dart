@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonal_app/splash_screen.dart';
+import 'package:matrimonal_app/utils/preferences.dart';
 
-void main() {
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Preferences.initPref();
   runApp(MyApp());
 }
 

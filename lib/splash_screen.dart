@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:matrimonal_app/features/home_module/view/home_screen.dart';
+import 'package:matrimonal_app/utils/app_constants.dart';
+import 'package:matrimonal_app/utils/preferences.dart';
 import 'on_boarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {
@@ -13,12 +16,31 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _initializePreferences();
 
+    // Timer(Duration(seconds: 3), () {
+    //   Navigator.pushReplacement(
+    //     context,
+    //     MaterialPageRoute(builder: (context) => OnboardingScreen()),
+    //   );
+    // });
+  }
+
+
+  Future<void> _initializePreferences() async {
+    var token = Preferences.getString(AppConstants.token, defaultValue: "");
     Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => OnboardingScreen()),
-      );
+      if (token.isNotEmpty) {
+        Navigator.pushReplacement(
+          context,
+            MaterialPageRoute(builder: (context) => HomeScreen()),
+        );
+      } else { // Handle no token case
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => OnboardingScreen()),
+        ); // Handle no token case
+      }
     });
   }
 
