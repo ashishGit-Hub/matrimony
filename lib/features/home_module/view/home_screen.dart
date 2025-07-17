@@ -35,10 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
       key: _scaffoldKey,
       drawer: const ProfileDrawer(),
       backgroundColor: Colors.white,
-      body: IndexedStack(
-        index: _currentIndex,
-        children: screens,
-      ),
+      body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.white,
         currentIndex: _currentIndex,

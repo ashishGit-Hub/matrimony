@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
@@ -36,14 +37,11 @@ class _PersonalScreenState extends State<PersonalScreen> {
   }
 
   Future<void> _loadPrefilledData() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isRegistered = prefs.getBool('isRegistered') ?? false;
-
-    if (isRegistered) {
-      _heightController.text = prefs.getString('height') ?? '';
-      _weightController.text = prefs.getString('weight') ?? '';
-    }
-
+      _heightController.text = Preferences.getString('height') ?? '';
+      _weightController.text = Preferences.getString('weight') ?? '';
+      selectedState = Preferences.getString('state',defaultValue: '').isNotEmpty ? StateModel.fromJson(jsonDecode(Preferences.getString('state'))) : null;
+      log("Selected State: $selectedState");
+      selectedCity = Preferences.getString('city',defaultValue: '').isNotEmpty ? CityModel.fromJson(jsonDecode(Preferences.getString('city'))) : null;
     setState(() => isInitialLoading = false);
   }
 
