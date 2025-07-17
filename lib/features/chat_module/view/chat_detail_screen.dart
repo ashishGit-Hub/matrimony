@@ -55,7 +55,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
             decoration: BoxDecoration(
-              color: isMe ? Colors.green[300] : Colors.grey[200],
+              color: isMe ? Colors.orangeAccent : Colors.grey[200],
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(12),
                 topRight: const Radius.circular(12),
@@ -88,7 +88,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Scaffold(
       backgroundColor: Color(0xffece5dd),
       appBar: AppBar(
-        backgroundColor: Color(0xff075E54),
+        backgroundColor: Colors.orange,
         titleSpacing: 0,
         title: Row(
           children: [
@@ -110,7 +110,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         actions: [
           IconButton(icon: Icon(Icons.videocam), onPressed: () {}),
           IconButton(icon: Icon(Icons.call), onPressed: () {}),
-          IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
+       //   IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
       body: Column(
@@ -145,7 +145,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 IconButton(icon: Icon(Icons.attach_file, color: Colors.grey), onPressed: () {}),
                 IconButton(icon: Icon(Icons.camera_alt, color: Colors.grey), onPressed: () {}),
                 CircleAvatar(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.orangeAccent,
                   child: IconButton(icon: Icon(Icons.send, color: Colors.white), onPressed: sendMessage),
                 ),
               ],
