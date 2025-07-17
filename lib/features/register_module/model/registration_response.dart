@@ -42,8 +42,8 @@ class User {
   final AnnualIncome? annualIncome;
   final JobType? jobType;
   final CompanyType? companyType;
-  final String? relegion;
-  final String? caste;
+  final Religion? relegion;
+  final Caste? caste;
 
   User({
     required this.name,
@@ -84,8 +84,8 @@ class User {
       annualIncome: null,
       jobType: null,
       companyType: null,
-      relegion: '',
-      caste: '',
+      relegion: null,
+      caste: null
     );
   }
 
@@ -119,8 +119,8 @@ class User {
       companyType: json['companyType'] != null
           ? CompanyType.fromJson(json['companyType'])
           : null,
-      relegion: json['relegion'],
-      caste: json['caste'],
+      relegion: json['relegion'] != null ? Religion.fromJson(json['relegion']) : null,
+      caste: json['caste'] != null ? Caste.fromJson(json['caste']) : null,
     );
   }
 }
@@ -204,6 +204,34 @@ class CompanyType {
   factory CompanyType.fromJson(Map<String, dynamic> json) {
     return CompanyType(
       ctid: json['ctid'] ?? 0,
+      name: json['name'] ?? '',
+    );
+  }
+}
+
+class Religion {
+  final int rid;
+  final String name;
+
+  Religion({required this.rid, required this.name});
+
+  factory Religion.fromJson(Map<String, dynamic> json) {
+    return Religion(
+      rid: json['rid'] ?? 0,
+      name: json['name'] ?? '',
+    );
+  }
+}
+
+class Caste {
+  final int cid;
+  final String name;
+
+  Caste({required this.cid, required this.name});
+
+  factory Caste.fromJson(Map<String, dynamic> json) {
+    return Caste(
+      cid: json['cid'] ?? 0,
       name: json['name'] ?? '',
     );
   }

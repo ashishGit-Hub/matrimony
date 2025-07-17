@@ -1,15 +1,20 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:matrimonial_app/utils/app_constants.dart';
-import 'package:matrimonial_app/utils/preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:matrimonial_app/features/home_module/view/home_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/releigon_details.dart';
 import 'package:matrimonial_app/features/register_module/view_model/basic_detail_service.dart';
+import 'package:matrimonial_app/providers/user_provider.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
+import 'package:provider/provider.dart';
 
 class BasicDetailsScreen extends StatefulWidget {
-  var isRegisteredScreen = true;
-  BasicDetailsScreen({super.key,  required this.isRegisteredScreen});
+  var isRegisteredScreen = false;
+
+  BasicDetailsScreen({super.key, required this.isRegisteredScreen});
 
   @override
   State<BasicDetailsScreen> createState() => _BasicDetailsScreenState();
@@ -29,41 +34,28 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
     fetchAndPrefill();
   }
 
-
-  // Future<void> fetchProfileDetails() async {
-  //   final token = await SharedPrefs.getToken();
-  //
-  //   final result = await MatchService.getProfileDetails(widget.userId, token!);
-  //   if (result != null) {
-  //     setState(() {
-  //       profile = result;
-  //       isLoading = false;
-  //     });
-  //   } else {
-  //     setState(() => isLoading = false);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Failed to load profile")),
-  //     );
-  //   }
-  // }
-
   Future<void> fetchAndPrefill() async {
-    final prefs = await SharedPreferences.getInstance();
-    final isRegistered = prefs.getBool('isRegistered') ?? false;
+    var userProvider = Provider.of<UserProvider>(context, listen: false);
 
-    if (!widget.isRegisteredScreen) {
+    var user = await userProvider.getUserDetails();
+
+    if (!widget.isRegisteredScreen && user != null) {
       setState(() {
-        ageController.text = prefs.getString('age') ?? '';
-        dobController.text = prefs.getString('dob') ?? '';
-        emailController.text = prefs.getString('email') ?? '';
-        final gender = prefs.getString('gender')?.toLowerCase() ?? '';
+        if (kDebugMode) {
+          log("Check Page Parameters: ${widget.isRegisteredScreen.toString()}");
+        }
+
+        ageController.text = user.age;
+        dobController.text = user.dob;
+        emailController.text = user.email ?? "";
+        final gender = user.gender?.toLowerCase() ?? '';
         selectedGender = gender == 'male'
             ? 'Male'
             : gender == 'female'
-            ? 'Female'
-            : gender == 'others'
-            ? 'Others'
-            : '';
+                ? 'Female'
+                : gender == 'others'
+                    ? 'Others'
+                    : '';
         isLoading = false;
       });
     } else {
@@ -79,84 +71,92 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white,
-      appBar: AppBar(
-        systemOverlayStyle: SystemUiOverlayStyle.light,
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomeScreen()),
-            );
-          },
-        ),
-        elevation: 0,
+    return Consumer<UserProvider>(builder: (context, userProvider, child) {
+      return Scaffold(
         backgroundColor: Colors.white,
-        title: const Text("Basic Details", style: TextStyle(color: Colors.black)),
-        centerTitle: true,
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildProgressHeader(),
-            const SizedBox(height: 30),
-            const Text("Please provide your basic details:",
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            const SizedBox(height: 20),
-            _buildTextField('Age:', ageController, TextInputType.number),
-            const SizedBox(height: 15),
-            const Text('Date of Birth:'),
-            const SizedBox(height: 10),
-            TextField(
-              controller: dobController,
-              readOnly: true,
-              decoration: const InputDecoration(border: OutlineInputBorder()),
-              onTap: () async {
-                FocusScope.of(context).unfocus();
-                DateTime? pickedDate = await showDatePicker(
-                  context: context,
-                  initialDate: DateTime(2000),
-                  firstDate: DateTime(1900),
-                  lastDate: DateTime.now(),
-                );
-                if (pickedDate != null) {
-                  dobController.text = "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-                }
-              },
-            ),
-            const SizedBox(height: 15),
-            _buildTextField('Email ID:', emailController, TextInputType.emailAddress),
-            const SizedBox(height: 15),
-            const Text("Gender:"),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                _buildGenderButton("Male"),
-                const SizedBox(width: 10),
-                _buildGenderButton("Female"),
-                const SizedBox(width: 10),
-                _buildGenderButton("Others"),
-              ],
-            ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _handleSubmit,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                minimumSize: const Size(double.infinity, 50),
-              ),
-              child: const Text("Continue", style: TextStyle(color: Colors.white)),
-            ),
-          ],
+        appBar: AppBar(
+          systemOverlayStyle: SystemUiOverlayStyle.light,
+          leading: IconButton(
+            icon: const Icon(Icons.arrow_back, color: Colors.black),
+            onPressed: () {
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => HomeScreen()),
+              );
+            },
+          ),
+          elevation: 0,
+          backgroundColor: Colors.white,
+          title: const Text("Basic Details",
+              style: TextStyle(color: Colors.black)),
+          centerTitle: true,
         ),
-      ),
-    );
+        body: isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : Padding(
+                padding: const EdgeInsets.all(24.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _buildProgressHeader(),
+                    const SizedBox(height: 30),
+                    const Text("Please provide your basic details:",
+                        style: TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 20),
+                    _buildTextField(
+                        'Age:', ageController, TextInputType.number),
+                    const SizedBox(height: 15),
+                    const Text('Date of Birth:'),
+                    const SizedBox(height: 10),
+                    TextField(
+                      controller: dobController,
+                      readOnly: true,
+                      decoration:
+                          const InputDecoration(border: OutlineInputBorder()),
+                      onTap: () async {
+                        FocusScope.of(context).unfocus();
+                        DateTime? pickedDate = await showDatePicker(
+                          context: context,
+                          initialDate: DateTime(2000),
+                          firstDate: DateTime(1900),
+                          lastDate: DateTime.now(),
+                        );
+                        if (pickedDate != null) {
+                          dobController.text =
+                              "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    _buildTextField('Email ID:', emailController,
+                        TextInputType.emailAddress),
+                    const SizedBox(height: 15),
+                    const Text("Gender:"),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        _buildGenderButton("Male"),
+                        const SizedBox(width: 10),
+                        _buildGenderButton("Female"),
+                        const SizedBox(width: 10),
+                        _buildGenderButton("Others"),
+                      ],
+                    ),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: _handleSubmit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.green,
+                        minimumSize: const Size(double.infinity, 50),
+                      ),
+                      child: const Text("Continue",
+                          style: TextStyle(color: Colors.white)),
+                    ),
+                  ],
+                ),
+              ),
+      );
+    });
   }
 
   Widget _buildProgressHeader() {
@@ -182,15 +182,18 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
         const Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text("Basic Details", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text("Next Step: Religion Details", style: TextStyle(color: Colors.grey)),
+            Text("Basic Details",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("Next Step: Religion Details",
+                style: TextStyle(color: Colors.grey)),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildTextField(String label, TextEditingController controller, TextInputType inputType) {
+  Widget _buildTextField(
+      String label, TextEditingController controller, TextInputType inputType) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -214,7 +217,8 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
           });
         },
         style: OutlinedButton.styleFrom(
-          backgroundColor: selectedGender == gender ? Colors.orange : Colors.white,
+          backgroundColor:
+              selectedGender == gender ? Colors.orange : Colors.white,
         ),
         child: Text(gender, style: const TextStyle(color: Colors.black)),
       ),
@@ -230,7 +234,8 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
     if (age.isEmpty || dob.isEmpty || email.isEmpty || gender.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          content: Text('Please fill all the fields', style: TextStyle(color: Colors.white)),
+          content: Text('Please fill all the fields',
+              style: TextStyle(color: Colors.white)),
           backgroundColor: Colors.red,
         ),
       );

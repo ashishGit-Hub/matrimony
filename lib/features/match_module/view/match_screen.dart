@@ -2,8 +2,10 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
 import 'package:matrimonial_app/features/match_module/model/match_model.dart';
+import 'package:matrimonial_app/providers/match_provider.dart';
 import 'package:matrimonial_app/services/match_service.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
+import 'package:provider/provider.dart';
 
 import 'profiledetailscreen.dart';
 
@@ -21,70 +23,72 @@ class _MatchesScreenState extends State<MatchesScreen> {
   @override
   void initState() {
     super.initState();
-    // fetchMatchData();
+    fetchMatchData();
   }
 
-  // Future<void> fetchMatchData() async {
-  //   final token = await SharedPrefs.getToken();
-  //
-  //   final response = await MatchService.fetchMatches(
-  //     stateId: "33",
-  //     cityId: "677",
-  //     token: token,
-  //   );
-  //
-  //   if (response != null && response.status) {
-  //     setState(() {
-  //       matches = response.data ?? [];
-  //       isLoading = false;
-  //     });
-  //   } else {
-  //     setState(() => isLoading = false);
-  //     ScaffoldMessenger.of(context).showSnackBar(
-  //       const SnackBar(content: Text("Failed to load matches")),
-  //     );
-  //   }
-  // }
+  Future<void> fetchMatchData() async {
+
+    final matchProvider = Provider.of<MatchProvider>(context, listen: false);
+    final response = await matchProvider.getMatches(
+      stateId: "33",
+      cityId: "677",
+    );
+
+    if (response != null && response.status) {
+      setState(() {
+        matches = response.data ?? [];
+        isLoading = false;
+      });
+    } else {
+      setState(() => isLoading = false);
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Failed to load matches")),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.grey[100],
-      appBar: AppBar(
-        automaticallyImplyLeading: false,
-        backgroundColor: Colors.orange,
-        elevation: 0,
-        toolbarHeight: 120,
-        flexibleSpace: Padding(
-          padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
-          child: TextField(
-            decoration: InputDecoration(
-              hintText: "Search by criteria",
-              prefixIcon: const Icon(Icons.search),
-              filled: true,
-              fillColor: Colors.white,
-              contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
-                borderSide: BorderSide.none,
+    return Consumer<MatchProvider>(
+        builder: (context, matchProvider, child){
+          return Scaffold(
+            backgroundColor: Colors.grey[100],
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              backgroundColor: Colors.orange,
+              elevation: 0,
+              toolbarHeight: 120,
+              flexibleSpace: Padding(
+                padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: "Search by criteria",
+                    prefixIcon: const Icon(Icons.search),
+                    filled: true,
+                    fillColor: Colors.white,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(12),
+                      borderSide: BorderSide.none,
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ),
-      ),
-      body: isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : Padding(
-        padding: const EdgeInsets.all(16),
-        child: ListView.builder(
-          itemCount: matches.length,
-          itemBuilder: (context, index) {
-            final match = matches[index];
-            return _matchCard(match: match);
-          },
-        ),
-      ),
-    );
+            body: isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : Padding(
+              padding: const EdgeInsets.all(16),
+              child: ListView.builder(
+                itemCount: matches.length,
+                itemBuilder: (context, index) {
+                  final match = matches[index];
+                  return _matchCard(match: match);
+                },
+              ),
+            ),
+          );
+        });
   }
 
   Widget _matchCard({required MatchModel match}) {

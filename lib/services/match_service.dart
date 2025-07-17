@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 
 import '../features/match_module/model/match_model.dart';
 
@@ -14,14 +15,14 @@ class MatchService {
     required String cityId,
     String? ageMin,
     String? ageMax,
-    String? token,
   }) async {
     try {
+      var token = Preferences.getString(AppConstants.token, defaultValue: "");
       final uri =
           Uri.parse('${AppConstants.apiBaseUrl}${AppConstants.getMatches}');
 
       final headers = <String, String>{
-        if (token != null) 'Authorization': 'Bearer $token',
+        'Authorization': 'Bearer $token',
         'Accept': 'application/json',
       };
 

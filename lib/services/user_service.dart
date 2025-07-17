@@ -66,6 +66,9 @@ class UserService {
     Preferences.setString('gender', user['gender'] ?? '');
     Preferences.setString('image', user['images'] ?? '');
 
+    Preferences.setString('state', jsonEncode(user['state']).toString());
+    Preferences.setString('city', jsonEncode(user['city']).toString());
+
     // Nested fields
     Preferences.setString('profileFor', user['profileFor']?['name'] ?? '');
     Preferences.setString('education', user['education']?['name'] ?? '');
