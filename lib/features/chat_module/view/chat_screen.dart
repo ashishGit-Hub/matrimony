@@ -30,7 +30,8 @@ class ChatScreen extends StatelessWidget {
       appBar: AppBar(
         title: Center(child: Text('Chat',style: AppTextStyle.semiBoldInterText(fontSize: 25),)),
 
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.orange
+        ,
       ),
       body: ListView.builder(
         itemCount: chatList.length,

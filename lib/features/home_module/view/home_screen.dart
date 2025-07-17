@@ -7,6 +7,7 @@ import 'package:matrimonial_app/features/match_module/view/match_screen.dart';
 import 'package:matrimonial_app/features/profile_module/view/profile_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
 
+import '../../notification_module/view/notification_list_screen.dart';
 import '../model/profile_drawer.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -100,22 +101,39 @@ class HomeContent extends StatelessWidget {
                     ],
                   ),
                 ),
-                Stack(
-                  alignment: Alignment.topRight,
-                  children: [
-                    const Icon(Icons.notifications, size: 28, color: ColorConstant.notifyColor),
-                    Positioned(
-                      top: 0,
-                      right: 0,
-                      child: CircleAvatar(
-                        radius: 8,
-                        backgroundColor: Colors.green,
-                        child: const Text("2",
-                            style: TextStyle(fontSize: 10, color: Colors.white)),
+                GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => NotificationListScreen(), // Your notification screen
                       ),
-                    ),
-                  ],
+                    );
+                  },
+                  child: Stack(
+                    alignment: Alignment.topRight,
+                    children: [
+                      const Icon(
+                        Icons.notifications,
+                        size: 28,
+                        color: Color(0xFFFE6D00), // or use your ColorConstant.notifyColor
+                      ),
+                      Positioned(
+                        top: 0,
+                        right: 0,
+                        child: CircleAvatar(
+                          radius: 8,
+                          backgroundColor: Colors.green,
+                          child: const Text(
+                            "2",
+                            style: TextStyle(fontSize: 10, color: Colors.white),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
+
               ],
             ),
 

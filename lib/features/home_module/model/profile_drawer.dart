@@ -3,7 +3,6 @@ import 'package:matrimonial_app/features/home_module/view/change_passwordscreen.
 import 'package:matrimonial_app/features/home_module/view_model/logout_service.dart';
 import 'package:matrimonial_app/features/login_module/view/login_screen.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
-
 import '../view/user_detail_screen.dart';
 
 class ProfileDrawer extends StatefulWidget {
@@ -29,28 +28,63 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
       child: Column(
         children: [
           const SizedBox(height: 50),
-          const ListTile(
-            leading: CircleAvatar(
-              radius: 28,
-              backgroundColor: Colors.grey,
-              child: Icon(Icons.person, size: 40, color: Colors.white),
-            ),
-            title: Text('Nikhil Kumar', style: TextStyle(fontWeight: FontWeight.bold)),
-            subtitle: Text('ID - TARR7333'),
-          ),
-          const SizedBox(height: 10),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.redAccent,
-                padding: const EdgeInsets.symmetric(vertical: 14),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const CircleAvatar(
+                radius: 20,
+                backgroundColor: Colors.grey,
+                child: Icon(Icons.person, size: 30, color: Colors.white),
               ),
-              onPressed: () {},
-              child: const Text('Upgrade Membership', style: TextStyle(color: Colors.white)),
-            ),
+              const SizedBox(width: 10),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: const [
+                    Text(
+                      'Nikhil Kumar',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 13,
+                      ),
+                    ),
+                    SizedBox(height: 2),
+                    Text(
+                      'ID - TARR7333',
+                      style: TextStyle(
+                        fontSize: 11,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 10),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.orange,
+                  padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(8),
+                  ),
+                ),
+                onPressed: () {
+                  // Handle Upgrade button press
+                },
+                child: const Text(
+                  'Upgrade',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 11,
+                  ),
+                ),
+              ),
+              SizedBox(width: 10,)
+            ],
           ),
+
+
+
           const SizedBox(height: 8),
           const Text('UPTO 75% OFF ALL MEMBERSHIP PLANS'),
           const Divider(height: 30),
@@ -121,7 +155,6 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                   icon: Icons.security,
                   destination: const DummyScreen(title: 'Safety Center'),
                 ),
-
                 ListTile(
                   selected: _selectedIndex == 9,
                   selectedTileColor: Colors.grey[200],
@@ -132,8 +165,6 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                       _selectedIndex = 9;
                     });
                     Navigator.pop(context); // Close drawer
-
-                    // Use addPostFrameCallback to delay dialog until drawer closes
                     WidgetsBinding.instance.addPostFrameCallback((_) {
                       showDialog(
                         context: context,
@@ -150,13 +181,12 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                               ),
                               TextButton(
                                 onPressed: () {
-                                    // Navigator.of(dialogContext).pop(); // Close dialog first
-                                    Preferences.clearSharPreference();
-                                    Navigator.of(dialogContext).pushAndRemoveUntil(
-                                      MaterialPageRoute(builder: (_) => LoginScreen()),
-                                          (route) => false,
-                                    );
-                                  },
+                                  Preferences.clearSharPreference();
+                                  Navigator.of(dialogContext).pushAndRemoveUntil(
+                                    MaterialPageRoute(builder: (_) => LoginScreen()),
+                                        (route) => false,
+                                  );
+                                },
                                 child: const Text("Logout", style: TextStyle(color: Colors.red)),
                               ),
                             ],

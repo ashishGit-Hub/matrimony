@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:matrimonial_app/features/chat_module/model/chat_model.dart';
+import 'package:matrimonial_app/core/constant/app_textstyle.dart';
+
+import '../model/chat_model.dart';
+
 
 
 class ChatDetailScreen extends StatefulWidget {
@@ -55,7 +58,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
             constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
             decoration: BoxDecoration(
-              color: isMe ? Colors.orangeAccent : Colors.grey[200],
+              color: isMe ? Colors.orangeAccent[100] : Colors.grey[200],
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(12),
                 topRight: const Radius.circular(12),
@@ -101,15 +104,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(widget.name, style: TextStyle(fontSize: 18)),
-                Text("Online", style: TextStyle(fontSize: 12, color: Colors.white70)),
+                Text(widget.name, style: TextStyle(fontSize: 18,color: Colors.white)),
+                Text("Online", style: AppTextStyle.semiBoldInterText(fontSize: 12, color: Colors.white70,)),
               ],
             ),
           ],
         ),
         actions: [
-          IconButton(icon: Icon(Icons.videocam), onPressed: () {}),
-          IconButton(icon: Icon(Icons.call), onPressed: () {}),
+          IconButton(icon: Icon(Icons.videocam,color: Colors.white,), onPressed: () {}),
+          IconButton(icon: Icon(Icons.call,color: Colors.white,), onPressed: () {}),
        //   IconButton(icon: Icon(Icons.more_vert), onPressed: () {}),
         ],
       ),
@@ -129,28 +132,51 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           Divider(height: 1),
           Container(
             color: Colors.white,
-            padding: EdgeInsets.symmetric(horizontal: 8, vertical: 6),
+            padding: EdgeInsets.symmetric(horizontal: 1, vertical: 4),
             child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                IconButton(icon: Icon(Icons.emoji_emotions_outlined, color: Colors.grey), onPressed: () {}),
+                IconButton(
+                  icon: Icon(Icons.emoji_emotions_outlined, color: Colors.grey),
+                  onPressed: () {},
+                ),
                 Expanded(
-                  child: TextField(
-                    controller: _controller,
-                    decoration: InputDecoration(
-                      hintText: "Type a message",
-                      border: InputBorder.none,
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 40,
+                      maxHeight: 120, // Max height for multiline
+                    ),
+                    child: Scrollbar(
+                      child: TextField(
+                        controller: _controller,
+                        maxLines: null,
+                        keyboardType: TextInputType.multiline,
+                        decoration: InputDecoration(
+                          hintText: "Type a message",
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                        ),
+                      ),
                     ),
                   ),
                 ),
-                IconButton(icon: Icon(Icons.attach_file, color: Colors.grey), onPressed: () {}),
-                IconButton(icon: Icon(Icons.camera_alt, color: Colors.grey), onPressed: () {}),
-                CircleAvatar(
-                  backgroundColor: Colors.orangeAccent,
-                  child: IconButton(icon: Icon(Icons.send, color: Colors.white), onPressed: sendMessage),
+
+                IconButton(
+                  icon: Icon(Icons.camera_alt, color: Colors.grey,),
+                  onPressed: () {},
                 ),
+
+
+                  IconButton(
+                    icon: Icon(Icons.send, color: Colors.orange),
+                    onPressed: sendMessage,
+                  ),
+
+
               ],
             ),
-          ),
+          )
+
         ],
       ),
     );
