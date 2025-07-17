@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 import '../model/religion_model.dart';
 
 Future<List<Religion>> fetchReligions() async {

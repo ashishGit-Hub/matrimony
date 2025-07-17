@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/features/home_module/view_model/change_password_service.dart';
-import 'package:matrimonal_app/utils/sharepref.dart'; // your token service
+import 'package:matrimonial_app/features/home_module/view_model/change_password_service.dart';
+import 'package:matrimonial_app/utils/sharepref.dart'; // your token service
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});

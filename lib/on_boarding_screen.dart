@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/features/login_module/view/login_screen.dart';
+import 'package:matrimonial_app/features/login_module/view/login_screen.dart';
 
 
 class OnboardingScreen extends StatefulWidget {

@@ -1,9 +1,9 @@
 // Your imports...
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/core/constant/color_constant.dart';
-import 'package:matrimonal_app/features/match_module/model/match_model.dart';
-import 'package:matrimonal_app/features/match_module/view_model/match_service.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/core/constant/color_constant.dart';
+import 'package:matrimonial_app/features/match_module/model/match_model.dart';
+import 'package:matrimonial_app/services/match_service.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 
 import 'profiledetailscreen.dart';
 
@@ -21,30 +21,30 @@ class _MatchesScreenState extends State<MatchesScreen> {
   @override
   void initState() {
     super.initState();
-    fetchMatchData();
+    // fetchMatchData();
   }
 
-  Future<void> fetchMatchData() async {
-    final token = await SharedPrefs.getToken();
-
-    final response = await MatchService.fetchMatches(
-      stateId: "33",
-      cityId: "677",
-      token: token,
-    );
-
-    if (response != null && response.status) {
-      setState(() {
-        matches = response.data ?? [];
-        isLoading = false;
-      });
-    } else {
-      setState(() => isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to load matches")),
-      );
-    }
-  }
+  // Future<void> fetchMatchData() async {
+  //   final token = await SharedPrefs.getToken();
+  //
+  //   final response = await MatchService.fetchMatches(
+  //     stateId: "33",
+  //     cityId: "677",
+  //     token: token,
+  //   );
+  //
+  //   if (response != null && response.status) {
+  //     setState(() {
+  //       matches = response.data ?? [];
+  //       isLoading = false;
+  //     });
+  //   } else {
+  //     setState(() => isLoading = false);
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Failed to load matches")),
+  //     );
+  //   }
+  // }
 
   @override
   Widget build(BuildContext context) {

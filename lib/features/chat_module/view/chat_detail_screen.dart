@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
-import 'package:matrimonal_app/features/chat_module/model/chat_model.dart';
+import 'package:matrimonial_app/features/chat_module/model/chat_model.dart';
 
 
 class ChatDetailScreen extends StatefulWidget {

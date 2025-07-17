@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 import '../model/religion_model.dart';
 import '../view_model/religion_detail_service.dart';
 import 'personal_details.dart';
@@ -186,9 +188,10 @@ class _ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
                 );
 
                 if (success) {
-                  final prefs = await SharedPreferences.getInstance();
-                  await prefs.setString('religion', selectedReligion!.name);
-                  await prefs.setString('caste', selectedCaste!.name);
+                  Preferences.setString('religion', selectedReligion!.name);
+                  Preferences.setString('caste', selectedCaste!.name);
+
+                  Preferences.setString(AppConstants.registrationStep, "Fourth");
 
                   Navigator.push(
                     context,

@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/core/constant/app_textstyle.dart';
+import 'package:matrimonial_app/core/constant/app_textstyle.dart';
 import 'chat_detail_screen.dart';
 
 class ChatScreen extends StatelessWidget {

@@ -1,8 +1,11 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/core/constant/color_constant.dart';
-import 'package:matrimonal_app/features/match_module/model/match_model.dart';
-import 'package:matrimonal_app/features/match_module/view_model/match_service.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/core/constant/color_constant.dart';
+import 'package:matrimonial_app/features/match_module/model/match_model.dart';
+import 'package:matrimonial_app/services/match_service.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 class ProfileDetailScreen extends StatefulWidget {
@@ -24,6 +27,9 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   void initState() {
     super.initState();
     fetchProfileDetails();
+    if(kDebugMode){
+      log("Get User Profile");
+    }
   }
 
   Future<void> fetchProfileDetails() async {
@@ -48,7 +54,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
     return Scaffold(
       backgroundColor: Colors.white,
       appBar: PreferredSize(
-        preferredSize: const Size.fromHeight(120),
+        preferredSize: const Size.fromHeight(80),
         child: AppBar(
           backgroundColor: Colors.orange,
           elevation: 0,
@@ -61,21 +67,21 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
                   icon: const Icon(Icons.arrow_back, color: Colors.black),
                   onPressed: () => Navigator.pop(context),
                 ),
-                Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search by criteria",
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
+                // Expanded(
+                //   child: TextField(
+                //     decoration: InputDecoration(
+                //       hintText: "Search by criteria",
+                //       prefixIcon: const Icon(Icons.search),
+                //       filled: true,
+                //       fillColor: Colors.white,
+                //       contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                //       border: OutlineInputBorder(
+                //         borderRadius: BorderRadius.circular(12),
+                //         borderSide: BorderSide.none,
+                //       ),
+                //     ),
+                //   ),
+                // ),
               ],
             ),
           ),

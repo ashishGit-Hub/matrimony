@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:path/path.dart';
 
 class AboutService {

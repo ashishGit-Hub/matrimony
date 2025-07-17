@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/core/constant/app_textstyle.dart';
-import 'package:matrimonal_app/core/constant/color_constant.dart';
-import 'package:matrimonal_app/features/chat_module/view/chat_screen.dart';
-import 'package:matrimonal_app/features/home_module/view/change_passwordscreen.dart';
-import 'package:matrimonal_app/features/match_module/view/match_screen.dart';
-import 'package:matrimonal_app/features/profile_module/view/profile_screen.dart';
-import 'package:matrimonal_app/features/register_module/view/basic_detils_screen.dart';
+import 'package:matrimonial_app/core/constant/app_textstyle.dart';
+import 'package:matrimonial_app/core/constant/color_constant.dart';
+import 'package:matrimonial_app/features/chat_module/view/chat_screen.dart';
+import 'package:matrimonial_app/features/home_module/view/change_passwordscreen.dart';
+import 'package:matrimonial_app/features/match_module/view/match_screen.dart';
+import 'package:matrimonial_app/features/profile_module/view/profile_screen.dart';
+import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
 
 import '../model/profile_drawer.dart';
 
@@ -28,7 +28,7 @@ class _HomeScreenState extends State<HomeScreen> {
       HomeContent(username: widget.username, scaffoldKey: _scaffoldKey),
       const MatchesScreen(),
       ChatScreen(),
-      BasicDetailsScreen(),
+      BasicDetailsScreen(isRegisteredScreen: false),
     ];
 
     return Scaffold(

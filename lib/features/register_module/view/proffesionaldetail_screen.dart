@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:matrimonal_app/features/register_module/model/proffesional_detail_model.dart';
-import 'package:matrimonal_app/features/register_module/view/about_yourself_screen.dart';
-import 'package:matrimonal_app/features/register_module/view_model/proffesional_details_service.dart';
+import 'package:matrimonial_app/features/register_module/model/proffesional_detail_model.dart';
+import 'package:matrimonial_app/features/register_module/view/about_yourself_screen.dart';
+import 'package:matrimonial_app/features/register_module/view_model/proffesional_details_service.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../services/user_service.dart';
@@ -40,7 +42,7 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
   Future<void> loadDropdownData() async {
     try {
       final prefs = await SharedPreferences.getInstance();
-      final regUser = await UserService.fetchUserDetails();
+      // final regUser = await UserService.fetchUserDetails();
 
       final education = await ProfessionalService.fetchEducationList();
       final jobTypes = await ProfessionalService.fetchJobTypeList();
@@ -55,11 +57,11 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
         occupationList = occupations;
         annualIncomeList = incomes;
 
-        String savedEdu = (prefs.getString('education') ?? regUser?.education ?? '').toString();
-        String savedJobType = (prefs.getString('jobType') ?? regUser?.jobType ?? '').toString();
-        String savedCompanyType = (prefs.getString('companyType') ?? regUser?.companyType ?? '').toString();
-        String savedOccupation = (prefs.getString('occupation') ?? regUser?.occupation ?? '').toString();
-        String savedIncome = (prefs.getString('annualIncome') ?? regUser?.annualIncome ?? '').toString();
+        String savedEdu = Preferences.getString('education', defaultValue: '');
+        String savedJobType = Preferences.getString('jobType', defaultValue: '');
+        String savedCompanyType = Preferences.getString('companyType', defaultValue: '');
+        String savedOccupation = Preferences.getString('occupation', defaultValue: '');
+        String savedIncome = Preferences.getString('annualIncome', defaultValue: '');
 
 
         selectedEducation = education.firstWhere(
@@ -114,12 +116,13 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
 
     if (success) {
       // ✅ Save locally for reuse
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('education', selectedEducation!.name);
-      await prefs.setString('jobType', selectedJobType!.name);
-      await prefs.setString('companyType', selectedCompanyType!.name);
-      await prefs.setString('occupation', selectedOccupation!.name);
-      await prefs.setString('annualIncome', selectedAnnualIncome!.range);
+      Preferences.setString('education', selectedEducation!.name);
+      Preferences.setString('jobType', selectedJobType!.name);
+      Preferences.setString('companyType', selectedCompanyType!.name);
+      Preferences.setString('occupation', selectedOccupation!.name);
+      Preferences.setString('annualIncome', selectedAnnualIncome!.range);
+
+      Preferences.setString(AppConstants.registrationStep, "Sixth");
 
       Navigator.push(context, MaterialPageRoute(builder: (_) => AboutYourselfScreen()));
     } else {

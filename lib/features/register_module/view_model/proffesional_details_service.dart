@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/features/register_module/model/proffesional_detail_model.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/features/register_module/model/proffesional_detail_model.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 
 class ProfessionalService {
   static const String baseUrl = 'https://matrimony.sqcreation.site/api';

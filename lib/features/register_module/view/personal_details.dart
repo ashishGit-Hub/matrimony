@@ -2,9 +2,11 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/features/register_module/view/proffesionaldetail_screen.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/features/register_module/view/proffesionaldetail_screen.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../../../utils/app_constants.dart';
+import '../../../utils/preferences.dart';
 import '../model/register_model.dart';
 import '../view_model/personal_detail_service.dart';
 
@@ -107,13 +109,12 @@ class _PersonalScreenState extends State<PersonalScreen> {
     setState(() => isLoading = false);
 
     if (success) {
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('height', height);
-      await prefs.setString('weight', weight);
-      await prefs.setString('state', selectedState!.name);
-      await prefs.setString('city', selectedCity!.name);
-      await prefs.setBool('isRegistered', true);
+      Preferences.setString('height', height);
+      Preferences.setString('weight', weight);
+      Preferences.setString('state', selectedState!.name);
+      Preferences.setString('city', selectedCity!.name);
 
+      Preferences.setString(AppConstants.registrationStep, "Fifth");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (_) => ProfessionalDetailsScreen()),

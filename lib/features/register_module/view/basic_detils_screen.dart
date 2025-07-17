@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:matrimonal_app/features/home_module/view/home_screen.dart';
-import 'package:matrimonal_app/features/register_module/view/releigon_details.dart';
-import 'package:matrimonal_app/features/register_module/view_model/basic_detail_service.dart';
+import 'package:matrimonial_app/features/home_module/view/home_screen.dart';
+import 'package:matrimonial_app/features/register_module/view/releigon_details.dart';
+import 'package:matrimonial_app/features/register_module/view_model/basic_detail_service.dart';
 
 class BasicDetailsScreen extends StatefulWidget {
-  const BasicDetailsScreen({super.key});
+  var isRegisteredScreen = true;
+  BasicDetailsScreen({super.key,  required this.isRegisteredScreen});
 
   @override
   State<BasicDetailsScreen> createState() => _BasicDetailsScreenState();
@@ -26,11 +29,29 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
     fetchAndPrefill();
   }
 
+
+  // Future<void> fetchProfileDetails() async {
+  //   final token = await SharedPrefs.getToken();
+  //
+  //   final result = await MatchService.getProfileDetails(widget.userId, token!);
+  //   if (result != null) {
+  //     setState(() {
+  //       profile = result;
+  //       isLoading = false;
+  //     });
+  //   } else {
+  //     setState(() => isLoading = false);
+  //     ScaffoldMessenger.of(context).showSnackBar(
+  //       const SnackBar(content: Text("Failed to load profile")),
+  //     );
+  //   }
+  // }
+
   Future<void> fetchAndPrefill() async {
     final prefs = await SharedPreferences.getInstance();
     final isRegistered = prefs.getBool('isRegistered') ?? false;
 
-    if (isRegistered) {
+    if (!widget.isRegisteredScreen) {
       setState(() {
         ageController.text = prefs.getString('age') ?? '';
         dobController.text = prefs.getString('dob') ?? '';
@@ -233,22 +254,21 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
       Navigator.pop(context); // Close loader
 
       if (response.status) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setString('age', age);
-        await prefs.setString('dob', dob);
-        await prefs.setString('email', email);
-        await prefs.setString('gender', gender);
-        await prefs.setBool('isRegistered', true); // ✅ Set registered flag
+        Preferences.setString('age', age);
+        Preferences.setString('dob', dob);
+        Preferences.setString('email', email);
+        Preferences.setString('gender', gender);
 
+        Preferences.setString(AppConstants.registrationStep, "Third");
         Navigator.push(
           context,
           MaterialPageRoute(builder: (_) => ReligionDetailsScreen()),
         );
       } else {
         String message = response.message;
-        if (response.errors != null && response.errors!.containsKey('email')) {
-          message = response.errors!['email'][0];
-        }
+        // if (response.errors != null && response.errors!.containsKey('email')) {
+        //   message = response.errors!['email'][0];
+        // }
 
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(

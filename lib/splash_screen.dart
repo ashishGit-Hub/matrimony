@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/features/home_module/view/home_screen.dart';
-import 'package:matrimonal_app/utils/app_constants.dart';
-import 'package:matrimonal_app/utils/preferences.dart';
+import 'package:matrimonial_app/features/home_module/view/home_screen.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 import 'on_boarding_screen.dart';
 
 class SplashScreen extends StatefulWidget {

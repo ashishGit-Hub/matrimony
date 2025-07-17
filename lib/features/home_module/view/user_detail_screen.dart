@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/features/register_module/model/registration_response.dart';
+import 'package:matrimonial_app/features/register_module/model/registration_response.dart';
 
 import '../../../services/user_service.dart';
 
@@ -17,16 +17,16 @@ class _ViewProfileScreenState extends State<ViewProfileScreen> {
   @override
   void initState() {
     super.initState();
-    fetchUser();
+    // fetchUser();
   }
 
-  Future<void> fetchUser() async {
-    final fetchedUser = await UserService.fetchUserDetails();
-    setState(() {
-      user = fetchedUser;
-      isLoading = false;
-    });
-  }
+  // Future<void> fetchUser() async {
+  //   final fetchedUser = await UserService.fetchUserDetails();
+  //   setState(() {
+  //     user = fetchedUser;
+  //     isLoading = false;
+  //   });
+  // }
 
   @override
   Widget build(BuildContext context) {

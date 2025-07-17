@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:matrimonal_app/features/home_module/view/change_passwordscreen.dart';
-import 'package:matrimonal_app/features/home_module/view_model/logout_service.dart';
-import 'package:matrimonal_app/features/login_module/view/login_screen.dart';
-import 'package:matrimonal_app/utils/preferences.dart';
+import 'package:matrimonial_app/features/home_module/view/change_passwordscreen.dart';
+import 'package:matrimonial_app/features/home_module/view_model/logout_service.dart';
+import 'package:matrimonial_app/features/login_module/view/login_screen.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 
 import '../view/user_detail_screen.dart';
 

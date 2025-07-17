@@ -3,12 +3,13 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
 
-import '../model/match_model.dart';
+import '../features/match_module/model/match_model.dart';
 
 class MatchService {
-  static Future<MatchResponse?> fetchMatches({
+
+  Future<MatchResponse?> fetchMatches({
     required String stateId,
     required String cityId,
     String? ageMin,
@@ -70,8 +71,10 @@ class MatchService {
         }),
       );
 
-      print("🔽 Status Code: ${response.statusCode}");
-      print("🔽 Body: ${response.body}");
+      if (kDebugMode) {
+        print("🔽 Status Code: ${response.statusCode}");
+        print("🔽 Body: ${response.body}");
+      }
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -80,7 +83,9 @@ class MatchService {
         return false;
       }
     } catch (e) {
-      print("❌ Exception: $e");
+      if (kDebugMode) {
+        print("❌ Exception: $e");
+      }
       return false;
     }
   }
@@ -104,7 +109,9 @@ class MatchService {
       }
       return null;
     } catch (e) {
-      print("❌ Error fetching profile: $e");
+      if (kDebugMode) {
+        print("❌ Error fetching profile: $e");
+      }
       return null;
     }
   }

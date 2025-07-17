@@ -1,16 +1,14 @@
 class RegistrationResponse {
   final bool status;
   final String message;
-  final String token;
-  final User user;
-  final Map<String, dynamic>? errors; // ✅ Add this
+  final String? token;
+  final User? user;
 
   RegistrationResponse({
     required this.status,
     required this.message,
     required this.token,
     required this.user,
-    this.errors,
   });
 
   factory RegistrationResponse.fromJson(Map<String, dynamic> json) {
@@ -23,7 +21,6 @@ class RegistrationResponse {
       user: json.containsKey('user') && json['user'] != null
           ? User.fromJson(json['user'])
           : User.empty(),
-      errors: json['errors'], // ✅ Handle errors from backend
     );
   }
 }
@@ -37,7 +34,7 @@ class User {
   final String height;
   final String weight;
   final String? myself;
-  final dynamic images;
+  final String? images;
   final String? gender;
   final ProfileFor? profileFor;
   final Education? education;

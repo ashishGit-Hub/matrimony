@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:matrimonal_app/utils/app_constants.dart';
-import 'package:matrimonal_app/utils/preferences.dart';
-import 'package:matrimonal_app/utils/sharepref.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
+import 'package:matrimonial_app/utils/sharepref.dart';
 
 class LogoutService {
   static Future<Map<String, dynamic>> logoutUser() async {

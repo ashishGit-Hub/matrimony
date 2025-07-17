@@ -1,4 +1,4 @@
-# matrimonal_app
+# matrimonial_app
 
 A new Flutter project.
 
