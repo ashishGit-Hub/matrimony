@@ -1,7 +1,8 @@
-// Your imports...
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
 import 'package:matrimonial_app/features/match_module/model/match_model.dart';
+import 'package:matrimonial_app/features/match_module/view/receive_request.dart';
+import 'package:matrimonial_app/features/match_module/view/send_request_page.dart';
 import 'package:matrimonial_app/providers/match_provider.dart';
 import 'package:matrimonial_app/services/match_service.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
@@ -16,18 +17,58 @@ class MatchesScreen extends StatefulWidget {
   State<MatchesScreen> createState() => _MatchesScreenState();
 }
 
-class _MatchesScreenState extends State<MatchesScreen> {
+class _MatchesScreenState extends State<MatchesScreen>
+    with TickerProviderStateMixin {
+  late TabController _tabController;
   List<MatchModel> matches = [];
   bool isLoading = true;
+  List<MatchModel> sentRequests = [];
+  List<MatchModel> receivedRequests = [];
+
+
+  final List<String> preferences = [
+    "All Matches",
+    "Newly Joined",
+    "Viewed You",
+    "Shortlisted You",
+    "Viewed By You",
+    "Shortlisted By You",
+    "Sent Request",
+    "Receive Request",
+    "Accepted Request",
+  ];
+  final Map<String, bool> selectedPreferences = {};
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 3, vsync: this);
+    _tabController.addListener(() {
+      setState(() {});
+    });
+
     fetchMatchData();
+
+    // Initialize preferences
+    for (var pref in preferences) {
+      selectedPreferences[pref] = false;
+    }
+
+    // Dummy Sent Requests
+    sentRequests = [
+      // MatchModel(name: "Priya Sharma", profile: "", status: "accepted"),
+      // MatchModel(name: "Ravi Kumar", profile: "", status: "rejected"),
+    ];
+
+    // Dummy Received Requests
+    receivedRequests = [
+      MatchModel(name: "Ankita Yadav", profile: ""),
+      MatchModel(name: "Raj Verma", profile: ""),
+    ];
   }
 
-  Future<void> fetchMatchData() async {
 
+  Future<void> fetchMatchData() async {
     final matchProvider = Provider.of<MatchProvider>(context, listen: false);
     final response = await matchProvider.getMatches(
       stateId: "33",
@@ -47,35 +88,255 @@ class _MatchesScreenState extends State<MatchesScreen> {
     }
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return Consumer<MatchProvider>(
-        builder: (context, matchProvider, child){
-          return Scaffold(
-            backgroundColor: Colors.grey[100],
-            appBar: AppBar(
-              automaticallyImplyLeading: false,
-              backgroundColor: Colors.orange,
-              elevation: 0,
-              toolbarHeight: 120,
-              flexibleSpace: Padding(
-                padding: const EdgeInsets.only(top: 60, left: 16, right: 16),
-                child: TextField(
-                  decoration: InputDecoration(
-                    hintText: "Search by criteria",
-                    prefixIcon: const Icon(Icons.search),
-                    filled: true,
-                    fillColor: Colors.white,
-                    contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12),
-                      borderSide: BorderSide.none,
-                    ),
+  void _showPreferenceBottomSheet() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (_) {
+        return Padding(
+          padding: EdgeInsets.only(
+            bottom: MediaQuery.of(context).viewInsets.bottom,
+            top: 16,
+            left: 16,
+            right: 16,
+          ),
+          child: Wrap(
+            children: [
+              Center(
+                child: Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 12),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[400],
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
               ),
+              const Text(
+                "Match Preference:",
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+              ),
+              const SizedBox(height: 10),
+              ...preferences.map((pref) {
+                return CheckboxListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(pref),
+                  value: selectedPreferences[pref],
+                  onChanged: (bool? value) {
+                    setState(() {
+                      selectedPreferences[pref] = value ?? false;
+                    });
+                  },
+                );
+              }).toList(),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  OutlinedButton(
+                    onPressed: () {
+                      setState(() {
+                        for (var key in selectedPreferences.keys) {
+                          selectedPreferences[key] = false;
+                        }
+                      });
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Clear"),
+                  ),
+                  ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                    ),
+                    onPressed: () {
+                      Navigator.pop(context);
+                    },
+                    child: const Text("Apply"),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildSendTab() {
+    if (sentRequests.isEmpty) {
+      return const Center(child: Text("No sent requests"));
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: sentRequests.length,
+      itemBuilder: (context, index) {
+        final match = sentRequests[index];
+        final imagePath = "https://matrimony.sqcreation.site/${match.profile ?? ""}";
+        // final status = match.status?.toLowerCase() ?? "pending";
+        // final color = status == "accepted"
+        //     ? Colors.green
+        //     : status == "rejected"
+        //     ? Colors.red
+        //     : Colors.orange;
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 35,
+                backgroundImage: match.profile?.isNotEmpty == true
+                    ? NetworkImage(imagePath)
+                    : const AssetImage('assets/images/default_image.png') as ImageProvider,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(match.name ?? "--", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 6),
+                    // Text("Status: ${status.toUpperCase()}",
+                    //     style: TextStyle(color: color, fontWeight: FontWeight.w500)),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+
+  Widget _buildReceiveTab() {
+    if (receivedRequests.isEmpty) {
+      return const Center(child: Text("No received requests"));
+    }
+
+    return ListView.builder(
+      padding: const EdgeInsets.all(16),
+      itemCount: receivedRequests.length,
+      itemBuilder: (context, index) {
+        final match = receivedRequests[index];
+        final imagePath = "https://matrimony.sqcreation.site/${match.profile ?? ""}";
+
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
+          ),
+          child: Row(
+            children: [
+              CircleAvatar(
+                radius: 35,
+                backgroundImage: match.profile?.isNotEmpty == true
+                    ? NetworkImage(imagePath)
+                    : const AssetImage('assets/images/default_image.png') as ImageProvider,
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(match.name ?? "--", style: const TextStyle(fontWeight: FontWeight.bold)),
+                    const SizedBox(height: 10),
+                    Row(
+                      children: [
+                        OutlinedButton(
+                          onPressed: () {
+                            // Accept logic
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Accepted ${match.name}")),
+                            );
+                          },
+                          child: const Text("Accept"),
+                        ),
+                        const SizedBox(width: 8),
+                        OutlinedButton(
+                          onPressed: () {
+                            // Reject logic
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("Rejected ${match.name}")),
+                            );
+                          },
+                          child: const Text("Reject"),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
+      return Scaffold(
+        backgroundColor: Colors.grey[100],
+        appBar: AppBar(
+          automaticallyImplyLeading: false,
+          backgroundColor: Colors.orange,
+          elevation: 0,
+          toolbarHeight: 50,
+          bottom: PreferredSize(
+            preferredSize: const Size.fromHeight(100),
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
+                  child: TextField(
+                    decoration: InputDecoration(
+                      hintText: "Search by criteria",
+                      prefixIcon: const Icon(Icons.search),
+                      filled: true,
+                      fillColor: Colors.white,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(12),
+                        borderSide: BorderSide.none,
+                      ),
+                    ),
+                  ),
+                ),
+                TabBar(
+                  controller: _tabController,
+                  labelColor: Colors.white,
+                  unselectedLabelColor: Colors.white70,
+                  indicatorColor: Colors.white,
+                  tabs: const [
+                    Tab(text: "Profile"),
+                    Tab(text: "Send"),
+                    Tab(text: "Receive"),
+                  ],
+                ),
+              ],
             ),
-            body: isLoading
+          ),
+        ),
+        body: TabBarView(
+          controller: _tabController,
+          children: [
+            isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : Padding(
               padding: const EdgeInsets.all(16),
@@ -87,12 +348,28 @@ class _MatchesScreenState extends State<MatchesScreen> {
                 },
               ),
             ),
-          );
-        });
+            SendMatchesPage(sentRequests: sentRequests),
+
+            // Use new ReceiveMatchesPage widget
+            ReceiveMatchesPage(receivedRequests: receivedRequests),
+          ],
+        ),
+        floatingActionButton: _tabController.index == 0
+            ? FloatingActionButton(
+          backgroundColor: Colors.orange,
+          onPressed: _showPreferenceBottomSheet,
+          child: const Icon(Icons.filter_alt),
+        )
+            : null,
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+
+      );
+    });
   }
 
   Widget _matchCard({required MatchModel match}) {
-    final imagePath = "https://matrimony.sqcreation.site/${match.profile ?? ""}";
+    final imagePath =
+        "https://matrimony.sqcreation.site/${match.profile ?? ""}";
 
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
@@ -162,16 +439,16 @@ class _MatchesScreenState extends State<MatchesScreen> {
                       child: CircleAvatar(
                         backgroundColor: Colors.white,
                         child: Icon(
-                          match.isLiked == true ? Icons.favorite : Icons.favorite_border,
+                          match.isLiked == true
+                              ? Icons.favorite
+                              : Icons.favorite_border,
                           color: match.isLiked == true ? Colors.red : Colors.black,
                         ),
                       ),
                     ),
                     const SizedBox(height: 4),
-                    Text(
-                      '${match.likes ?? 0}',
-                      style: const TextStyle(fontSize: 12, color: Colors.black),
-                    ),
+                    Text('${match.likes ?? 0}',
+                        style: const TextStyle(fontSize: 12, color: Colors.black)),
                   ],
                 ),
               ),
@@ -182,8 +459,10 @@ class _MatchesScreenState extends State<MatchesScreen> {
                   clipper: ChatBubbleClipper(),
                   child: Container(
                     color: Colors.white,
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    child: const Text("Last seen 2m ago", style: TextStyle(fontSize: 12)),
+                    padding:
+                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+                    child: const Text("Last seen 2m ago",
+                        style: TextStyle(fontSize: 12)),
                   ),
                 ),
               ),
@@ -194,35 +473,45 @@ class _MatchesScreenState extends State<MatchesScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(match.name ?? "", style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                Text(match.name ?? "",
+                    style:
+                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 4),
                 Wrap(
                   spacing: 18,
                   runSpacing: 12,
                   children: [
-                    _infoItem('assets/images/age.png', '${match.age ?? "--"} yrs'),
-                    _infoItem('assets/images/age.png', '${match.height ?? "--"} cm'),
-                    _infoItem('assets/images/age.png', match.education?.name ?? "--"),
-                    _infoItem('assets/images/age.png', match.city?.name ?? "--"),
-                    _infoItem('assets/images/age.png', match.occupation?.name ?? "--"),
+                    _infoItem('assets/images/age.png',
+                        '${match.age ?? "--"} yrs'),
+                    _infoItem('assets/images/age.png',
+                        '${match.height ?? "--"} cm'),
+                    _infoItem('assets/images/age.png',
+                        match.education?.name ?? "--"),
+                    _infoItem('assets/images/age.png',
+                        match.city?.name ?? "--"),
+                    _infoItem('assets/images/age.png',
+                        match.occupation?.name ?? "--"),
                   ],
                 ),
                 const Divider(height: 30),
-                const Text("Interested with this profile?", style: TextStyle(fontWeight: FontWeight.w500)),
+                const Text("Interested with this profile?",
+                    style: TextStyle(fontWeight: FontWeight.w500)),
                 const SizedBox(height: 10),
                 Row(
                   children: [
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {},
-                        child: Text("Yes, Interested", style: TextStyle(color: ColorConstant.black)),
+                        child: Text("Yes, Interested",
+                            style: TextStyle(color: ColorConstant.black)),
                       ),
                     ),
                     const SizedBox(width: 10),
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () {},
-                        child: Text("No", style: TextStyle(color: ColorConstant.black)),
+                        child: Text("No",
+                            style: TextStyle(color: ColorConstant.black)),
                       ),
                     ),
                   ],

@@ -3,6 +3,8 @@ import 'package:matrimonial_app/features/home_module/view/change_passwordscreen.
 import 'package:matrimonial_app/features/home_module/view_model/logout_service.dart';
 import 'package:matrimonial_app/features/login_module/view/login_screen.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
+import '../../match_module/view/receive_request.dart';
+import '../../match_module/view/send_request_page.dart';
 import '../view/user_detail_screen.dart';
 
 class ProfileDrawer extends StatefulWidget {
@@ -103,17 +105,18 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                   index: 1,
                   selectedIndex: _selectedIndex,
                   onItemTapped: _onItemTapped,
-                  title: 'Partner Preferences',
+                  title: 'Send Matches',
                   icon: Icons.people,
-                  destination: const DummyScreen(title: 'Partner Preferences'),
+                  destination:const  SendMatchesPage(sentRequests: [],),
                 ),
+
                 DrawerItem(
                   index: 2,
                   selectedIndex: _selectedIndex,
                   onItemTapped: _onItemTapped,
-                  title: 'Spotlight',
-                  icon: Icons.star,
-                  destination: const DummyScreen(title: 'Spotlight'),
+                  title: 'Receive Request',
+                  icon: Icons.people,
+                  destination: const ReceiveMatchesPage(receivedRequests: []),
                 ),
                 DrawerItem(
                   index: 3,

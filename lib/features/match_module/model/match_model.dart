@@ -46,7 +46,7 @@ class MatchModel {
   SimpleName? companyType;
   SimpleName? annualIncome;
 
-  List<GalleryModel>? galleries; // ✅ Add galleries directly
+  List<GalleryModel>? galleries;
 
   MatchModel({
     this.id,
