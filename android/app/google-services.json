@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "786470810883",
+    "project_id": "matrimonial-webtis",
+    "storage_bucket": "matrimonial-webtis.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:786470810883:android:1fdbd574851d3487c1e536",
+        "android_client_info": {
+          "package_name": "com.example.matrimonial_app"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBmX1AETIPsYw6ESmHeWJtq_AU35QVCvgc"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

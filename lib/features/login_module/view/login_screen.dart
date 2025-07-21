@@ -1,8 +1,12 @@
+import 'dart:developer';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:matrimonial_app/core/constant/app_textstyle.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
+import 'package:matrimonial_app/core/firebase/firebase_notification_service.dart';
 import 'package:matrimonial_app/features/home_module/view/home_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/register_screen.dart';
 import 'package:matrimonial_app/providers/auth_provider.dart';
@@ -20,6 +24,17 @@ class LoginScreenState extends State<LoginScreen> {
   final TextEditingController numberController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   bool _isLoading = false;
+  String? fcmToken;
+  @override
+  void initState() {
+    super.initState();
+    getFcmToken();
+  }
+
+  Future<void> getFcmToken() async {
+    fcmToken = await FirebaseNotificationService().getFirebaseToken();
+    log("Notification Token: $fcmToken");
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -172,7 +187,7 @@ class LoginScreenState extends State<LoginScreen> {
     setState(() => _isLoading = true);
 
     try {
-      final response = await authProvider.userLogin(mobile, password);
+      final response = await authProvider.userLogin(mobile, password, fcmToken);
 
       setState(() => _isLoading = false);
 

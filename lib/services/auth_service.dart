@@ -13,11 +13,12 @@ import 'package:http/http.dart' as http;
 
 class AuthService {
 
-  Future<RegistrationResponse> loginUser(String mobile, String password) async {
+  Future<RegistrationResponse> loginUser(String mobile, String password, String? fcmToken) async {
     final url = Uri.parse(AppConstants.apiBaseUrl+AppConstants.login);
     final body = {
       'mobile': mobile,
       'password': password,
+      'fcm_token': fcmToken,
     };
 
     try {

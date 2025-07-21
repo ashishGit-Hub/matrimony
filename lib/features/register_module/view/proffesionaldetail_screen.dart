@@ -41,8 +41,6 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
 
   Future<void> loadDropdownData() async {
     try {
-      final prefs = await SharedPreferences.getInstance();
-      // final regUser = await UserService.fetchUserDetails();
 
       final education = await ProfessionalService.fetchEducationList();
       final jobTypes = await ProfessionalService.fetchJobTypeList();

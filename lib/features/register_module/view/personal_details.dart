@@ -5,7 +5,6 @@ import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/features/register_module/view/proffesionaldetail_screen.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/preferences.dart';
 import '../model/register_model.dart';
@@ -39,9 +38,6 @@ class _PersonalScreenState extends State<PersonalScreen> {
   Future<void> _loadPrefilledData() async {
       _heightController.text = Preferences.getString('height') ?? '';
       _weightController.text = Preferences.getString('weight') ?? '';
-      selectedState = Preferences.getString('state',defaultValue: '').isNotEmpty ? StateModel.fromJson(jsonDecode(Preferences.getString('state'))) : null;
-      log("Selected State: $selectedState");
-      selectedCity = Preferences.getString('city',defaultValue: '').isNotEmpty ? CityModel.fromJson(jsonDecode(Preferences.getString('city'))) : null;
     setState(() => isInitialLoading = false);
   }
 
@@ -55,6 +51,20 @@ class _PersonalScreenState extends State<PersonalScreen> {
           stateList = data.map((e) => StateModel.fromJson(e)).toList();
         });
       }
+      final state = Preferences.getString('state',defaultValue: '').isNotEmpty ? StateModel.fromJson(jsonDecode(Preferences.getString('state'))) : null;
+
+      final matchState = stateList.firstWhere(
+            (r) => r.name.trim().toLowerCase() == state?.name.toLowerCase(),
+        orElse: () => stateList.first,
+      );
+
+      selectedState = matchState;
+
+      if(selectedState != null){
+        _fetchCities(selectedState!.sid);
+      }
+
+
     }
   }
 
@@ -69,6 +79,13 @@ class _PersonalScreenState extends State<PersonalScreen> {
         setState(() {
           cityList = data.map((json) => CityModel.fromJson(json)).toList();
         });
+        final city = Preferences.getString('city',defaultValue: '').isNotEmpty ? CityModel.fromJson(jsonDecode(Preferences.getString('city'))) : null;
+        final matchCity = cityList.firstWhere(
+              (r) => r.name.trim().toLowerCase() == city?.name.toLowerCase(),
+          orElse: () => cityList.first,
+        );
+        selectedCity = matchCity;
+
       }
     } catch (e) {
       print("❌ Exception in city API: $e");

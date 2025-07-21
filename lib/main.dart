@@ -1,17 +1,27 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:matrimonial_app/core/firebase/firebase_notification_service.dart';
+import 'package:matrimonial_app/firebase_options.dart';
 import 'package:matrimonial_app/providers/auth_provider.dart';
 import 'package:matrimonial_app/providers/match_provider.dart';
 import 'package:matrimonial_app/providers/user_provider.dart';
-import 'package:matrimonial_app/services/auth_service.dart';
-import 'package:matrimonial_app/services/match_service.dart';
-import 'package:matrimonial_app/services/user_service.dart';
 import 'package:matrimonial_app/splash_screen.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Preferences.initPref();
+  await Permission.notification.isDenied.then((value) {
+    if (value) {
+      Permission.notification.request();
+    }
+  });
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+  await FirebaseNotificationService().initNotification();
   runApp(MyApp());
 }
 

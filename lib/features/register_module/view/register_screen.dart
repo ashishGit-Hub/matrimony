@@ -1,18 +1,20 @@
+import 'dart:developer';
+
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/core/constant/app_textstyle.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
+import 'package:matrimonial_app/core/firebase/firebase_notification_service.dart';
 import 'package:matrimonial_app/features/login_module/view/login_screen.dart';
 import 'package:matrimonial_app/features/register_module/model/register_model.dart';
 import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
 import 'package:matrimonial_app/features/register_module/view_model/profile_service.dart';
-import 'package:matrimonial_app/features/register_module/view_model/register_service.dart';
 import 'package:matrimonial_app/providers/auth_provider.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../model/registration_response.dart';
 
@@ -27,6 +29,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController mobileController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  String? fcmToken;
 
   List<ProfileFor> profileOptions = [];
   ProfileFor? selectedProfile;
@@ -35,9 +38,16 @@ class _RegisterScreenState extends State<RegisterScreen> {
   void initState() {
     super.initState();
     _loadProfileOptions();
+    getFcmToken();
   }
 
-  Future<void> _loadProfileOptions() async {
+  Future<void> getFcmToken() async {
+
+    fcmToken = await FirebaseNotificationService().getFirebaseToken();
+  }
+
+    Future<void> _loadProfileOptions() async {
+
     try {
       final options = await ProfileForService().fetchProfileOptions();
       setState(() {
@@ -233,6 +243,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         password: password,
         passwordConfirmation: password,
         profileFor: selectedProfile!.ptid.toString(),
+        fcmToken: fcmToken
       );
 
       final authProvider = Provider.of<AuthProvider>(context, listen: false);
