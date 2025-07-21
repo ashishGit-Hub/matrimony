@@ -6,6 +6,7 @@ import 'package:matrimonial_app/features/home_module/view/change_passwordscreen.
 import 'package:matrimonial_app/features/match_module/view/match_screen.dart';
 import 'package:matrimonial_app/features/profile_module/view/profile_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
+import 'package:matrimonial_app/features/setting_module/setting_screen.dart';
 
 import '../../notification_module/view/notification_list_screen.dart';
 import '../model/profile_drawer.dart';
@@ -29,7 +30,7 @@ class _HomeScreenState extends State<HomeScreen> {
       HomeContent(username: widget.username, scaffoldKey: _scaffoldKey),
       const MatchesScreen(),
       ChatScreen(),
-      BasicDetailsScreen(isRegisteredScreen: false),
+      SettingsScreen(),
     ];
 
     return Scaffold(
@@ -48,7 +49,7 @@ class _HomeScreenState extends State<HomeScreen> {
           BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
           BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Matches"),
           BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chat"),
-          BottomNavigationBarItem(icon: Icon(Icons.person), label: "Profile"),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
         ],
       ),
     );
