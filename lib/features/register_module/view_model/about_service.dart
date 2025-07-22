@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:path/path.dart';
 
@@ -11,7 +13,7 @@ class AboutService {
     required String myself,
     File? imageFile,
   }) async {
-    final token = await SharedPrefs.getToken();
+    final token = Preferences.getString(AppConstants.token, defaultValue: "");
     final uri = Uri.parse('$baseUrl/update-about');
 
     var request = http.MultipartRequest('POST', uri)

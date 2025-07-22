@@ -11,6 +11,8 @@ import '../model/register_model.dart';
 import '../view_model/personal_detail_service.dart';
 
 class PersonalScreen extends StatefulWidget {
+  const PersonalScreen({super.key});
+
   @override
   State<PersonalScreen> createState() => _PersonalScreenState();
 }

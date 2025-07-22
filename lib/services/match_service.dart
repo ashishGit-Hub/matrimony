@@ -116,4 +116,44 @@ class MatchService {
       return null;
     }
   }
+
+  static Future<bool> sendInterestRequest({
+    required String token,
+    required String likedId,
+  }) async {
+    final url =
+    Uri.parse("https://matrimony.sqcreation.site/api/update/like-user");
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: jsonEncode({
+          'liked_id': likedId, // ✅ MUST be 'liked_id'
+        }),
+      );
+
+      if (kDebugMode) {
+        print("🔽 Status Code: ${response.statusCode}");
+        print("🔽 Body: ${response.body}");
+      }
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        return data['status'] == true;
+      } else {
+        return false;
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print("❌ Exception: $e");
+      }
+      return false;
+    }
+  }
+
 }
