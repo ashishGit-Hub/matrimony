@@ -4,9 +4,6 @@ import 'package:matrimonial_app/features/register_module/model/registration_resp
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 
-
-import '../../../utils/sharepref.dart';
-
 class BasicDetailService {
   Future<RegistrationResponse> submitBasicDetails({
     required String age,

@@ -176,7 +176,7 @@ class ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
                     return;
                   }
 
-                  final token = await SharedPrefs.getToken() ?? '';
+                  final token = Preferences.getString(AppConstants.token, defaultValue: "");
                   if (token.isEmpty) {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Login token not found. Please login again.")),

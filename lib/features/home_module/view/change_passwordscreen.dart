@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/features/home_module/view_model/change_password_service.dart';
-import 'package:matrimonial_app/utils/sharepref.dart'; // your token service
+import 'package:matrimonial_app/utils/sharepref.dart';
+
+import '../../../utils/app_constants.dart';
+import '../../../utils/preferences.dart'; // your token service
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
@@ -25,9 +28,9 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
     setState(() => _isLoading = true);
 
-    final token = await SharedPrefs.getToken();
+    final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
-    if (token == null || token.isEmpty) {
+    if (token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User is not logged in")),
       );

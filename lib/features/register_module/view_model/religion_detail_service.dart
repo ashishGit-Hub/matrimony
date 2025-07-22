@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/utils/sharepref.dart';
+import '../../../utils/app_constants.dart';
+import '../../../utils/preferences.dart';
 import '../model/religion_model.dart';
 
 Future<List<Religion>> fetchReligions() async {
@@ -33,9 +35,9 @@ Future<bool> updateReligionDetails({
   required int religionId,
   required int casteId, required String token,
 }) async {
-  final token = await SharedPrefs.getToken(); // ✅ correct key
+  final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
-  if (token == null || token.isEmpty) {
+  if (token.isEmpty) {
     print("❌ Token not found!");
     return false;
   }

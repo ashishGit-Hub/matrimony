@@ -3,6 +3,9 @@ import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/features/register_module/model/proffesional_detail_model.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
 
+import '../../../utils/app_constants.dart';
+import '../../../utils/preferences.dart';
+
 class ProfessionalService {
   static const String baseUrl = 'https://matrimony.sqcreation.site/api';
 
@@ -66,7 +69,7 @@ class ProfessionalService {
     required int annualIncomeId,
   }) async {
     final url = Uri.parse('$baseUrl/update-professional');
-    final token = await SharedPrefs.getToken();
+    final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
     final headers = {
       'Content-Type': 'application/json',

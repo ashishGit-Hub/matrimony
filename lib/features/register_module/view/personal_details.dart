@@ -105,8 +105,8 @@ class _PersonalScreenState extends State<PersonalScreen> {
       return;
     }
 
-    final token = await SharedPrefs.getToken();
-    if (token == null || token.isEmpty) {
+    final token = Preferences.getString(AppConstants.token, defaultValue: "");
+    if (token.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text("User is not logged in")),
       );

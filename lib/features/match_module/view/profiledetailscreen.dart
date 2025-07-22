@@ -8,6 +8,9 @@ import 'package:matrimonial_app/services/match_service.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
+import '../../../utils/app_constants.dart';
+import '../../../utils/preferences.dart';
+
 class ProfileDetailScreen extends StatefulWidget {
   final String userId;
 
@@ -33,7 +36,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   }
 
   Future<void> fetchProfileDetails() async {
-    final token = await SharedPrefs.getToken();
+    final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
     final result = await MatchService.getProfileDetails(widget.userId, token!);
     if (result != null) {

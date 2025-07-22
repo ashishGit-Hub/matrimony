@@ -8,6 +8,8 @@ import 'package:matrimonial_app/services/match_service.dart';
 import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:provider/provider.dart';
 
+import '../../../utils/app_constants.dart';
+import '../../../utils/preferences.dart';
 import 'profiledetailscreen.dart';
 
 class MatchesScreen extends StatefulWidget {
@@ -415,7 +417,7 @@ class _MatchesScreenState extends State<MatchesScreen>
                   children: [
                     GestureDetector(
                       onTap: () async {
-                        final token = await SharedPrefs.getToken();
+                        final token = Preferences.getString(AppConstants.token, defaultValue: "");
                         final success = await MatchService.updateLikeUser(
                           token: token!,
                           likedId: match.id ?? "",
