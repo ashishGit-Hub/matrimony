@@ -89,7 +89,7 @@ class AuthService {
       final data = RegistrationResponse.fromJson(json);
 
       if (data.status) {
-        await Preferences.setString(AppConstants.apiBaseUrl,data.token!); // ✅ Save token using your utility
+        await Preferences.setString(AppConstants.token,data.token!); // ✅ Save token using your utility
       }
 
       return data;

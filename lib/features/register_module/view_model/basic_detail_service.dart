@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/features/register_module/model/registration_response.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
@@ -14,6 +15,7 @@ class BasicDetailService {
     final url = Uri.parse('http://matrimony.sqcreation.site/api/update-basic');
 
     final token = Preferences.getString(AppConstants.token, defaultValue: "");
+    log("Token: $token");
     if (token.isEmpty) {
       throw Exception("Token not found in SharedPreferences");
     }
