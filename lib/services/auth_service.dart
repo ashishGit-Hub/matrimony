@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../features/login_module/model/login_model.dart';
 import '../features/register_module/model/register_model.dart';
@@ -33,6 +34,11 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
+      final prefs = await SharedPreferences.getInstance();
+      final user = jsonDecode(response.body)['user'];
+      await prefs.setString('user_id', user['dummyid']); // save dummyid as string
+      print('✅ Saved user_id (dummyid): ${user['dummyid']}');
+
 
       if (kDebugMode) {
         print('📥 Received Response');

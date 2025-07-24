@@ -107,7 +107,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                   onItemTapped: _onItemTapped,
                   title: 'Send Matches',
                   icon: Icons.people,
-                  destination:const  SendMatchesPage(sentRequests: [],),
+                  destination:const  SendMatchesPage(),
                 ),
 
                 DrawerItem(
@@ -116,7 +116,7 @@ class _ProfileDrawerState extends State<ProfileDrawer> {
                   onItemTapped: _onItemTapped,
                   title: 'Receive Request',
                   icon: Icons.people,
-                  destination: const ReceiveMatchesPage(receivedRequests: []),
+                  destination: const ReceiveMatchesPage(),
                 ),
                 DrawerItem(
                   index: 3,

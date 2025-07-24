@@ -5,9 +5,6 @@ import 'package:matrimonial_app/features/register_module/view/about_yourself_scr
 import 'package:matrimonial_app/features/register_module/view_model/proffesional_details_service.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-
-import '../../../services/user_service.dart';
 
 class ProfessionalDetailsScreen extends StatefulWidget {
   const ProfessionalDetailsScreen({super.key});

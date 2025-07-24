@@ -21,7 +21,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
   final ImagePicker _picker = ImagePicker();
   XFile? _selectedImage;
   String? existingImageUrl;
-  bool isSubmitting = false, isLoading = true;
+  bool isSubmitting = false, isLoading = false;
 
   @override
   void initState() {

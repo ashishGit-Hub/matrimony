@@ -10,6 +10,7 @@ import 'package:provider/provider.dart';
 
 import '../../../utils/app_constants.dart';
 import '../../../utils/preferences.dart';
+import 'Notinterested_screen.dart';
 import 'profiledetailscreen.dart';
 
 class MatchesScreen extends StatefulWidget {
@@ -44,7 +45,7 @@ class _MatchesScreenState extends State<MatchesScreen>
   @override
   void initState() {
     super.initState();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 4, vsync: this);
     _tabController.addListener(() {
       setState(() {});
     });
@@ -329,6 +330,7 @@ class _MatchesScreenState extends State<MatchesScreen>
                     Tab(text: "Profile"),
                     Tab(text: "Send"),
                     Tab(text: "Receive"),
+                    Tab(text: "NotInterested",)
                   ],
                 ),
               ],
@@ -350,10 +352,11 @@ class _MatchesScreenState extends State<MatchesScreen>
                 },
               ),
             ),
-            SendMatchesPage(sentRequests: sentRequests),
+            SendMatchesPage(),
 
             // Use new ReceiveMatchesPage widget
-            ReceiveMatchesPage(receivedRequests: receivedRequests),
+            ReceiveMatchesPage(),
+            NotInterestedpage()
           ],
         ),
         floatingActionButton: _tabController.index == 0
@@ -503,21 +506,64 @@ class _MatchesScreenState extends State<MatchesScreen>
                   children: [
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final token =
+                          Preferences.getString("token", defaultValue: "");
+                          final provider = Provider.of<MatchProvider>(context,
+                              listen: false);
+                          bool success = await provider.sendInterest(
+                              token: token, userId: match.id ?? "");
+
+                          if (success) {
+                            setState(() {
+                              matches.remove(match);
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("✅ Interest sent")),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("❌ Failed to send interest")),
+                            );
+                          }
+                        },
                         child: Text("Yes, Interested",
                             style: TextStyle(color: ColorConstant.black)),
                       ),
                     ),
-                    const SizedBox(width: 10),
+                    SizedBox(width: 10),
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () {},
+                        onPressed: () async {
+                          final token =
+                          Preferences.getString("token", defaultValue: "");
+                          final provider = Provider.of<MatchProvider>(context,
+                              listen: false);
+                          bool success = await provider.sendNotInterested(
+                              token: token, userId: match.id ?? "");
+
+                          if (success) {
+                            setState(() {
+                              matches.remove(match);
+                            });
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(content: Text("🚫 Not Interested")),
+                            );
+                          } else {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                  content:
+                                  Text("❌ Failed to send not interested")),
+                            );
+                          }
+                        },
                         child: Text("No",
                             style: TextStyle(color: ColorConstant.black)),
                       ),
                     ),
                   ],
-                )
+                ),
+
               ],
             ),
           ),

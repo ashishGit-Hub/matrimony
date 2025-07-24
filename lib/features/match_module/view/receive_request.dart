@@ -1,21 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:matrimonial_app/providers/match_provider.dart';
+import 'package:provider/provider.dart';
 import 'package:matrimonial_app/features/match_module/model/match_model.dart';
 import 'package:matrimonial_app/features/match_module/view/profiledetailscreen.dart';
 
 class ReceiveMatchesPage extends StatelessWidget {
-  final List<MatchModel> receivedRequests;
-
-  const ReceiveMatchesPage({Key? key, required this.receivedRequests}) : super(key: key);
+  const ReceiveMatchesPage({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final matchProvider = Provider.of<MatchProvider>(context);
+
+    if (!matchProvider.isLoadingReceived &&
+        matchProvider.receivedInterests.isEmpty &&
+        matchProvider.errorReceived == null) {
+      matchProvider.fetchReceivedInterests();
+    }
+
+    final receivedRequests = matchProvider.receivedInterests;
+
     return Scaffold(
       appBar: AppBar(
-        title: Center(child: const Text("Received Matches",style: TextStyle(color: Colors.white),)),
+        title: const Center(
+          child: Text(
+            "Received Matches",
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
         backgroundColor: Colors.orange,
       ),
       backgroundColor: Colors.white,
-      body: receivedRequests.isEmpty
+      body: matchProvider.isLoadingReceived
+          ? const Center(child: CircularProgressIndicator())
+          : matchProvider.errorReceived != null
+          ? Center(child: Text("Error: ${matchProvider.errorReceived}"))
+          : receivedRequests.isEmpty
           ? Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
@@ -58,12 +77,14 @@ class ReceiveMatchesPage extends StatelessWidget {
               child: Row(
                 children: [
                   InkWell(
-                    borderRadius: BorderRadius.circular(30), // match CircleAvatar radius for ripple effect
+                    borderRadius: BorderRadius.circular(30),
                     onTap: () {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) =>ProfileDetailScreen(userId: '',), // replace with your screen and pass data if needed
+                          builder: (context) => ProfileDetailScreen(
+                            userId: match.id?.toString() ?? '',
+                          ),
                         ),
                       );
                     },
@@ -75,7 +96,6 @@ class ReceiveMatchesPage extends StatelessWidget {
                           : const AssetImage('assets/images/default_image.png') as ImageProvider,
                     ),
                   ),
-
                   const SizedBox(width: 20),
                   Expanded(
                     child: Column(
@@ -88,20 +108,32 @@ class ReceiveMatchesPage extends StatelessWidget {
                             fontSize: 18,
                           ),
                         ),
-
+                        if (match.age != null && match.age != "0")
+                          Text('Age: ${match.age}', style: TextStyle(color: Colors.grey[700])),
+                        if (match.city != null)
+                          Text('City: ${match.city}', style: TextStyle(color: Colors.grey[700])),
+                        const SizedBox(height: 8),
                         Row(
                           children: [
                             OutlinedButton(
                               style: OutlinedButton.styleFrom(
                                 side: const BorderSide(color: Colors.green),
                                 foregroundColor: Colors.green,
-                                minimumSize: const Size(70, 32), // width: 70, height: 32 (smaller size)
-                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4), // smaller padding
-                                textStyle: const TextStyle(fontSize: 14), // smaller font size
+                                minimumSize: const Size(70, 32),
+                                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                                textStyle: const TextStyle(fontSize: 14),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
+                                final success = await matchProvider.acceptInterest(
+                                  match.id?.toString() ?? '',
+                                );
+
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Accepted ${match.name}")),
+                                  SnackBar(
+                                    content: Text(success
+                                        ? "Accepted ${match.name}"
+                                        : "Failed to accept ${match.name}"),
+                                  ),
                                 );
                               },
                               child: const Text("Accept"),
@@ -115,16 +147,23 @@ class ReceiveMatchesPage extends StatelessWidget {
                                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                                 textStyle: const TextStyle(fontSize: 14),
                               ),
-                              onPressed: () {
+                              onPressed: () async {
+                                final success = await matchProvider.rejectInterest(
+                                  match.id?.toString() ?? '',
+                                );
+
                                 ScaffoldMessenger.of(context).showSnackBar(
-                                  SnackBar(content: Text("Rejected ${match.name}")),
+                                  SnackBar(
+                                    content: Text(success
+                                        ? "Rejected ${match.name}"
+                                        : "Failed to reject ${match.name}"),
+                                  ),
                                 );
                               },
                               child: const Text("Reject"),
                             ),
                           ],
                         ),
-
                       ],
                     ),
                   ),
