@@ -36,24 +36,7 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      final prefs = await SharedPreferences.getInstance();
-      final id = prefs.getInt('user_id'); // ✅ Fetch as int
-
-      if (id == null) {
-        if (kDebugMode) {
-          print('❌ userId is missing in SharedPreferences');
-        }
-      } else {
-        if (kDebugMode) {
-          print('✅ userId loaded: $id');
-        }
-      }
-
-      setState(() {
-        currentUserId = id;
-      });
-
-      Provider.of<ChatProvider>(context, listen: false).loadMessages();
+      Provider.of<ChatProvider>(context, listen: false).loadMessages(widget.chatUserId);
     });
   }
 
@@ -170,92 +153,93 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final provider = Provider.of<ChatProvider>(context);
 
-    return Scaffold(
-      backgroundColor: const Color(0xffece5dd),
-      appBar: AppBar(
-        backgroundColor: Colors.orange,
-        titleSpacing: 0,
-        title: Row(
-          children: [
-            CircleAvatar(
-              backgroundImage: widget.image != null ? NetworkImage(widget.image!) : null,
-              backgroundColor: Colors.grey[300],
-              child: widget.image == null
-                  ? const Icon(Icons.person, color: Colors.white)
-                  : null,
-            ),
-            const SizedBox(width: 10),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(widget.name, style: const TextStyle(fontSize: 18, color: Colors.white)),
-                Text("Online", style: AppTextStyle.semiBoldInterText(fontSize: 12, color: Colors.white70)),
-              ],
-            ),
+    return Consumer<ChatProvider>(builder: (context,provider, child){
+     return Scaffold(
+        backgroundColor: const Color(0xffece5dd),
+        appBar: AppBar(
+          backgroundColor: Colors.orange,
+          titleSpacing: 0,
+          title: Row(
+            children: [
+              CircleAvatar(
+                backgroundImage: widget.image != null ? NetworkImage(widget.image!) : null,
+                backgroundColor: Colors.grey[300],
+                child: widget.image == null
+                    ? const Icon(Icons.person, color: Colors.white)
+                    : null,
+              ),
+              const SizedBox(width: 10),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(widget.name, style: const TextStyle(fontSize: 18, color: Colors.white)),
+                  Text("Online", style: AppTextStyle.semiBoldInterText(fontSize: 12, color: Colors.white70)),
+                ],
+              ),
+            ],
+          ),
+          actions: [
+            IconButton(icon: const Icon(Icons.videocam, color: Colors.white), onPressed: () {}),
+            IconButton(icon: const Icon(Icons.call, color: Colors.white), onPressed: () {}),
           ],
         ),
-        actions: [
-          IconButton(icon: const Icon(Icons.videocam, color: Colors.white), onPressed: () {}),
-          IconButton(icon: const Icon(Icons.call, color: Colors.white), onPressed: () {}),
-        ],
-      ),
-      body: Column(
-        children: [
-          Expanded(
-            child: provider.isLoadingMessages
-                ? const Center(child: CircularProgressIndicator())
-                : ListView.builder(
-              reverse: true,
-              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-              itemCount: provider.messageList.length,
-              itemBuilder: (context, index) {
-                final reversedIndex = provider.messageList.length - 1 - index;
-                final msg = provider.messageList[reversedIndex];
-                final isMe = msg.senderId.toString() != widget.chatUserId;
-                return buildMessage(msg, isMe);
-              },
+        body: Column(
+          children: [
+            Expanded(
+              child: provider.isLoadingMessages
+                  ? const Center(child: CircularProgressIndicator())
+                  : ListView.builder(
+                reverse: true,
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                itemCount: provider.messageList.length,
+                itemBuilder: (context, index) {
+                  final reversedIndex = provider.messageList.length - 1 - index;
+                  final msg = provider.messageList[reversedIndex];
+                  final isMe = msg.senderId.toString() != widget.chatUserId;
+                  return buildMessage(msg, isMe);
+                },
+              ),
             ),
-          ),
-          const Divider(height: 1),
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 4),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                IconButton(
-                  icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.grey),
-                  onPressed: () {},
-                ),
-                Expanded(
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(minHeight: 40, maxHeight: 120),
-                    child: Scrollbar(
-                      child: TextField(
-                        controller: _controller,
-                        maxLines: null,
-                        keyboardType: TextInputType.multiline,
-                        decoration: const InputDecoration(
-                          hintText: "Type a message",
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+            const Divider(height: 1),
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.symmetric(horizontal: 1, vertical: 4),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  IconButton(
+                    icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.grey),
+                    onPressed: () {},
+                  ),
+                  Expanded(
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 40, maxHeight: 120),
+                      child: Scrollbar(
+                        child: TextField(
+                          controller: _controller,
+                          maxLines: null,
+                          keyboardType: TextInputType.multiline,
+                          decoration: const InputDecoration(
+                            hintText: "Type a message",
+                            border: InputBorder.none,
+                            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                          ),
                         ),
                       ),
                     ),
                   ),
-                ),
-                IconButton(icon: const Icon(Icons.camera_alt, color: Colors.grey), onPressed: () {}),
-                IconButton(
-                  icon: const Icon(Icons.send, color: Colors.orange),
-                  onPressed: _sending ? null : sendMessage,
-                ),
-              ],
+                  IconButton(icon: const Icon(Icons.camera_alt, color: Colors.grey), onPressed: () {}),
+                  IconButton(
+                    icon: const Icon(Icons.send, color: Colors.orange),
+                    onPressed: _sending ? null : sendMessage,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
-      ),
-    );
+          ],
+        ),
+      );
+    });
   }
 }

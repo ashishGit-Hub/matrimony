@@ -29,12 +29,12 @@ class ChatProvider extends ChangeNotifier {
   }
 
   /// Fetch Message List (from /messages endpoint)
-  Future<void> loadMessages() async {
+  Future<void> loadMessages(String chatUserId) async {
     _isLoadingMessages = true;
     notifyListeners();
 
     try {
-      _messageList = await ChatService.fetchMessage();
+      _messageList = await ChatService.fetchMessage(chatUserId);
     } catch (e, stackTrace) {
       print('Error loading messages: $e');
       print(stackTrace);

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:developer';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
@@ -20,6 +21,9 @@ class ChatService {
     );
 
     if (response.statusCode == 200) {
+      if(kDebugMode){
+        log(response.body);
+      }
       final  jsonData = jsonDecode(response.body);
       if (jsonData != null) {
         final List<dynamic> dataList = jsonData;
@@ -32,8 +36,8 @@ class ChatService {
     }
   }
 
-  static Future<List<ChatUserModel>> fetchMessage() async {
-    final url = Uri.parse('http://matrimony.sqcreation.site/api/user/messages');
+  static Future<List<ChatUserModel>> fetchMessage(String chatUserId) async {
+    final url = Uri.parse('http://matrimony.sqcreation.site/api/user/messages/$chatUserId');
     final token = Preferences.getString(AppConstants.token, defaultValue: "");
     if(token.isEmpty){
       throw Exception('Token not found');
@@ -51,17 +55,17 @@ class ChatService {
 
 
       if (response.statusCode == 200) {
-        final Map<String, dynamic> jsonData = json.decode(response.body);
+        final jsonData = json.decode(response.body);
 
-        if (jsonData['status'] == true && jsonData['data'] != null) {
-          final List<dynamic> data = jsonData['data'];
+        // if (jsonData['status'] == true && jsonData['data'] != null) {
+          final List<dynamic> data = jsonData;
 
           return data
               .map((messageJson) => ChatUserModel.fromMessageJson(messageJson))
               .toList();
-        } else {
-          throw Exception('No messages found');
-        }
+        // } else {
+        //   throw Exception('No messages found');
+        // }
       } else {
         throw Exception(
             'Failed to fetch messages. Status Code: ${response.statusCode}');
