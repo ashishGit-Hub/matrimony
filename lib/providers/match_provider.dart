@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
 import '../../services/match_service.dart';
 import '../features/match_module/model/match_model.dart';
+import '../models/receive_match.dart';
 import '../utils/app_constants.dart';
 import '../utils/preferences.dart';
 
@@ -65,11 +66,11 @@ class MatchProvider extends ChangeNotifier {
     _isLoading = false;
     notifyListeners();
   }
-  List<MatchModel> _receivedInterests = [];
+  List<ReceiveInterest> _receivedInterests = [];
   bool _isLoadingReceived = false;
   String? _errorReceived;
 
-  List<MatchModel> get receivedInterests => _receivedInterests;
+  List<ReceiveInterest> get receivedInterests => _receivedInterests;
   bool get isLoadingReceived => _isLoadingReceived;
   String? get errorReceived => _errorReceived;
 

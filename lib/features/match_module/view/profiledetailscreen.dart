@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
 import 'package:matrimonial_app/features/match_module/model/match_model.dart';
 import 'package:matrimonial_app/services/match_service.dart';
-import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart';
 
 import '../../../utils/app_constants.dart';
@@ -38,7 +37,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   Future<void> fetchProfileDetails() async {
     final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
-    final result = await MatchService.getProfileDetails(widget.userId, token!);
+    final result = await MatchService.getProfileDetails(widget.userId, token);
     if (result != null) {
       setState(() {
         profile = result;

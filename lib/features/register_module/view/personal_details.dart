@@ -4,14 +4,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/features/register_module/view/proffesionaldetail_screen.dart';
-import 'package:matrimonial_app/utils/sharepref.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/preferences.dart';
 import '../model/register_model.dart';
 import '../view_model/personal_detail_service.dart';
 
 class PersonalScreen extends StatefulWidget {
-  const PersonalScreen({super.key});
+  final bool isRegisteredScreen;
+  const PersonalScreen({super.key, this.isRegisteredScreen = true});
 
   @override
   State<PersonalScreen> createState() => _PersonalScreenState();
@@ -28,6 +28,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
   CityModel? selectedCity;
 
   bool isLoading = false;
+  bool isStateLoading = true;
   bool isInitialLoading = true;
 
   @override
@@ -47,26 +48,31 @@ class _PersonalScreenState extends State<PersonalScreen> {
     final res = await http.get(Uri.parse("https://matrimony.sqcreation.site/api/get/state/list"));
     if (res.statusCode == 200) {
       final json = jsonDecode(res.body);
-      final data = json['data'];
-      if (data is List) {
-        setState(() {
-          stateList = data.map((e) => StateModel.fromJson(e)).toList();
-        });
-      }
-      final state = Preferences.getString('state',defaultValue: '').isNotEmpty ? StateModel.fromJson(jsonDecode(Preferences.getString('state'))) : null;
+      final List<dynamic> data = json['data'];
 
-      final matchState = stateList.firstWhere(
-            (r) => r.name.trim().toLowerCase() == state?.name.toLowerCase(),
-        orElse: () => stateList.first,
+      // Convert JSON to list of StateModel first
+      final List<StateModel> fetchedStates = data.map((e) => StateModel.fromJson(e)).toList();
+
+      final storedState = Preferences.getString('state', defaultValue: "") != "null"
+          ? Preferences.getString('state').replaceAll('"', '')
+          : null;
+
+
+      // Match the stored state from Preferences
+      final matchedState = fetchedStates.firstWhere(
+            (r) => r.name.trim().toLowerCase() == storedState?.trim().toLowerCase(),
+        orElse: () => fetchedStates.first,
       );
 
-      selectedState = matchState;
+      log("Matched: $matchedState ");
+      setState(() {
+        stateList = fetchedStates;
+        selectedState = matchedState;
+      });
 
-      if(selectedState != null){
+      if (selectedState != null) {
         _fetchCities(selectedState!.sid);
       }
-
-
     }
   }
 
@@ -81,9 +87,10 @@ class _PersonalScreenState extends State<PersonalScreen> {
         setState(() {
           cityList = data.map((json) => CityModel.fromJson(json)).toList();
         });
-        final city = Preferences.getString('city',defaultValue: '').isNotEmpty ? CityModel.fromJson(jsonDecode(Preferences.getString('city'))) : null;
+
+        final city = Preferences.getString('city',defaultValue: '') != "null" ? Preferences.getString('city').replaceAll('"', '') : null;
         final matchCity = cityList.firstWhere(
-              (r) => r.name.trim().toLowerCase() == city?.name.toLowerCase(),
+              (r) => r.name.trim().toLowerCase() == city?.toLowerCase(),
           orElse: () => cityList.first,
         );
         selectedCity = matchCity;
@@ -128,19 +135,40 @@ class _PersonalScreenState extends State<PersonalScreen> {
     if (success) {
       Preferences.setString('height', height);
       Preferences.setString('weight', weight);
-      Preferences.setString('state', selectedState!.name);
-      Preferences.setString('city', selectedCity!.name);
+      Preferences.setString('state', selectedState?.name.toString() ?? '');
+      Preferences.setString('city', selectedCity?.name.toString() ?? "");
 
       Preferences.setString(AppConstants.registrationStep, "Fifth");
-      Navigator.push(
-        context,
-        MaterialPageRoute(builder: (_) => ProfessionalDetailsScreen()),
-      );
+      if(widget.isRegisteredScreen){
+        navigate(ProfessionalDetailsScreen());
+      }else{
+        showSnackBar("Personal Details Updated Successfully", false);
+      }
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text("Failed to update personal details")),
-      );
+      showSnackBar("Failed to update personal details", true);
     }
+  }
+
+  /// Show SnackBar
+  Future<void> showSnackBar(String message, bool isError) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: isError ? Colors.white : Colors.black),
+        ),
+        backgroundColor: isError ? Colors.red : Colors.blueAccent,
+      ),
+    );
+  }
+
+  /// Navigate to new screen
+  Future<void> navigate(Widget screen) async {
+    if (!context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    );
   }
 
   @override
@@ -211,7 +239,9 @@ class _PersonalScreenState extends State<PersonalScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            DropdownButtonFormField<StateModel>(
+            stateList.isEmpty
+                ? CircularProgressIndicator()
+            : DropdownButtonFormField<StateModel>(
               value: selectedState,
               hint: const Text("Select State"),
               items: stateList.map((state) {
@@ -265,7 +295,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
           ),
           child: isLoading
               ? const CircularProgressIndicator(color: Colors.white)
-              : const Text("Continue", style: TextStyle(color: Colors.white70)),
+              : Text(widget.isRegisteredScreen ? "Continue" : "Update", style: TextStyle(color: Colors.white70)),
         ),
       ),
     );

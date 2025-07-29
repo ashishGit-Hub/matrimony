@@ -1,16 +1,20 @@
+import 'dart:developer';
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial_app/features/register_module/view_model/about_service.dart';
+import 'package:matrimonial_app/providers/user_provider.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../../../services/user_service.dart';
 import 'final_registration_screen.dart';
 
 class AboutYourselfScreen extends StatefulWidget {
-  const AboutYourselfScreen({super.key});
+  final bool isRegistrationScreen;
+  const AboutYourselfScreen({super.key, this.isRegistrationScreen = true});
 
   @override
   State<AboutYourselfScreen> createState() => _AboutYourselfScreenState();
@@ -26,26 +30,20 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
   @override
   void initState() {
     super.initState();
-    // _loadExisting();
+    _loadExisting();
   }
 
-  // Future<void> _loadExisting() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final user = await UserService.fetchUserDetails();
-  //
-  //   final savedAbout = prefs.getString('about') ?? user?.myself ?? '';
-  //   final savedImagePath = prefs.getString('imagePath');
-  //
-  //   setState(() {
-  //     aboutController.text = savedAbout;
-  //     if (savedImagePath != null && File(savedImagePath).existsSync()) {
-  //       _selectedImage = XFile(savedImagePath);
-  //     } else if (user?.images != null && user!.images.toString().isNotEmpty) {
-  //       existingImageUrl = 'https://matrimony.sqcreation.site/${user.images}';
-  //     }
-  //     isLoading = false;
-  //   });
-  // }
+  Future<void> _loadExisting() async {
+    final user = await Provider.of<UserProvider>(context, listen: false).getUserDetails();
+
+    setState(() {
+      aboutController.text = user?.myself ?? "";
+      if (user?.images != null && user?.images?.toString().isNotEmpty == true) {
+        existingImageUrl = 'https://matrimony.sqcreation.site/${user?.images}';
+      }
+      isLoading = false;
+    });
+  }
 
   Future<void> _pickImage() async {
     final XFile? picked = await _picker.pickImage(source: ImageSource.gallery);
@@ -71,38 +69,40 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
       return;
     }
 
-    if (_selectedImage == null && existingImageUrl == null) {
-      _showSnackBar("Please select an image.");
-      return;
-    }
+    // if (_selectedImage == null && existingImageUrl == null) {
+    //   _showSnackBar("Please select an image.");
+    //   return;
+    // }
 
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString('about', aboutText);
 
     setState(() => isSubmitting = true);
 
-    bool success = true;
+    Map<String, dynamic> response;
 
     if (_selectedImage != null) {
-      success = await AboutService.updateAbout(
+       response = await AboutService.updateAbout(
         myself: aboutText,
         imageFile: File(_selectedImage!.path),
       );
     } else {
-      success = await AboutService.updateAbout(myself: aboutText);
+        response = await AboutService.updateAbout(myself: aboutText);
     }
 
     setState(() => isSubmitting = false);
 
-    if (success) {
-      // ✅ Navigate to next screen without dialog
-      Preferences.setString(AppConstants.registrationStep, "Seventh");
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => FinalStepScreen()),
-      );
+    if (response['status']) {
+      if(widget.isRegistrationScreen){
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => FinalStepScreen()),
+        );
+      }else{
+        _showSnackBar(response['message']);
+      }
     } else {
-      _showSnackBar("Failed to submit details. Try again.");
+      _showSnackBar(response['message']);
     }
   }
 
@@ -201,7 +201,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
                 ),
                 child: isSubmitting
                     ? CircularProgressIndicator(color: Colors.white)
-                    : Text("Continue", style: TextStyle(color: Colors.white70)),
+                    : Text(widget.isRegistrationScreen ? "Continue" : "Update", style: TextStyle(color: Colors.white70)),
               ),
             ],
           ),

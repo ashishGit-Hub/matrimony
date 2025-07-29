@@ -10,7 +10,8 @@ import 'package:matrimonial_app/core/firebase/firebase_notification_service.dart
 import 'package:matrimonial_app/features/home_module/view/home_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/register_screen.dart';
 import 'package:matrimonial_app/providers/auth_provider.dart';
-import 'package:matrimonial_app/utils/sharepref.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
+import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:provider/provider.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -122,7 +123,7 @@ class LoginScreenState extends State<LoginScreen> {
                     ),
                     const SizedBox(height: 25),
                     ElevatedButton(
-                      onPressed: () => login(authProvider),
+                      onPressed: () => login(authProvider,context),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: ColorConstant.buttoncolor,
                         minimumSize: const Size(double.infinity, 48),
@@ -173,7 +174,7 @@ class LoginScreenState extends State<LoginScreen> {
     });
   }
 
-  Future<void> login(AuthProvider authProvider) async {
+  Future<void> login(AuthProvider authProvider,BuildContext context) async {
     final mobile = numberController.text.trim();
     final password = passwordController.text.trim();
 
@@ -192,7 +193,7 @@ class LoginScreenState extends State<LoginScreen> {
       setState(() => _isLoading = false);
 
       if (response.status) {
-        await SharedPrefs.saveToken(response.token ?? "");
+        Preferences.setString(AppConstants.token, response.token ?? "");
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(builder: (_) => HomeScreen()),

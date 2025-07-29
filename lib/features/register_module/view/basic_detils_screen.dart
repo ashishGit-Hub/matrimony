@@ -12,9 +12,9 @@ import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:provider/provider.dart';
 
 class BasicDetailsScreen extends StatefulWidget {
-  var isRegisteredScreen = false;
+  final bool isRegisteredScreen;
 
-  BasicDetailsScreen({super.key, required this.isRegisteredScreen});
+  const BasicDetailsScreen({super.key, this.isRegisteredScreen = true});
 
   @override
   State<BasicDetailsScreen> createState() => _BasicDetailsScreenState();
@@ -69,6 +69,28 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
     }
   }
 
+  /// Show SnackBar
+  Future<void> showSnackBar(String message, bool isError) async {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text(
+          message,
+          style: TextStyle(color: isError ? Colors.white : Colors.black),
+        ),
+        backgroundColor: isError ? Colors.red : Colors.blueAccent,
+      ),
+    );
+  }
+
+  /// Navigate to new screen
+  Future<void> navigate(Widget screen) async {
+    if (!context.mounted) return;
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (_) => screen),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
@@ -76,15 +98,7 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
         backgroundColor: Colors.white,
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
-          leading: IconButton(
-            icon: const Icon(Icons.arrow_back, color: Colors.black),
-            onPressed: () {
-              Navigator.pushReplacement(
-                context,
-                MaterialPageRoute(builder: (context) => HomeScreen()),
-              );
-            },
-          ),
+          leading: BackButton(color: Colors.black),
           elevation: 0,
           backgroundColor: Colors.white,
           title: const Text("Basic Details",
@@ -149,7 +163,8 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
                         backgroundColor: Colors.green,
                         minimumSize: const Size(double.infinity, 50),
                       ),
-                      child: const Text("Continue",
+                      child: Text(
+                          widget.isRegisteredScreen ? "Continue" : "Update",
                           style: TextStyle(color: Colors.white)),
                     ),
                   ],
@@ -265,31 +280,24 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
         Preferences.setString('gender', gender);
 
         Preferences.setString(AppConstants.registrationStep, "Third");
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (_) => ReligionDetailsScreen()),
-        );
-      } else {
-        String message = response.message;
-        // if (response.errors != null && response.errors!.containsKey('email')) {
-        //   message = response.errors!['email'][0];
-        // }
 
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(message, style: const TextStyle(color: Colors.white)),
-            backgroundColor: Colors.red,
-          ),
-        );
+        if (widget.isRegisteredScreen) {
+          navigate(ReligionDetailsScreen());
+        } else {
+          showSnackBar(response.message, false);
+        }
+      } else {
+        showSnackBar(response.message, true);
       }
     } catch (e) {
       Navigator.pop(context);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Submission failed: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+      showSnackBar('Submission failed: $e', false);
+      // ScaffoldMessenger.of(context).showSnackBar(
+      //   SnackBar(
+      //     content: Text('Submission failed: $e'),
+      //     backgroundColor: Colors.red,
+      //   ),
+      // );
     }
   }
 }

@@ -11,11 +11,10 @@ import '../features/register_module/model/register_model.dart';
 import '../features/register_module/model/registration_response.dart';
 import 'package:http/http.dart' as http;
 
-
 class AuthService {
-
-  Future<RegistrationResponse> loginUser(String mobile, String password, String? fcmToken) async {
-    final url = Uri.parse(AppConstants.apiBaseUrl+AppConstants.login);
+  Future<RegistrationResponse> loginUser(
+      String mobile, String password, String? fcmToken) async {
+    final url = Uri.parse(AppConstants.apiBaseUrl + AppConstants.login);
     final body = {
       'mobile': mobile,
       'password': password,
@@ -34,11 +33,12 @@ class AuthService {
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode(body),
       );
-      final prefs = await SharedPreferences.getInstance();
       final user = jsonDecode(response.body)['user'];
-      await prefs.setString('user_id', user['dummyid']); // save dummyid as string
-      print('✅ Saved user_id (dummyid): ${user['dummyid']}');
-
+      await Preferences.setString(
+          'user_id', user['dummyid']); // save dummyid as string
+      if (kDebugMode) {
+        print('✅ Saved user_id (dummyid): ${user['dummyid']}');
+      }
 
       if (kDebugMode) {
         print('📥 Received Response');
@@ -60,7 +60,7 @@ class AuthService {
 
       final data = RegistrationResponse.fromJson(json);
       if (data.status && data.token?.isNotEmpty == true) {
-        await Preferences.setString(AppConstants.token,data.token!);
+        await Preferences.setString(AppConstants.token, data.token!);
         if (kDebugMode) {
           print('✅ Token Saved');
         }
@@ -70,13 +70,16 @@ class AuthService {
       if (kDebugMode) {
         log('❌ Login failed with error: $e');
       }
-      return RegistrationResponse(status: false, message: "something went wrong",token: null, user: null);
-
+      return RegistrationResponse(
+          status: false,
+          message: "something went wrong",
+          token: null,
+          user: null);
     }
   }
 
-  Future<RegistrationResponse>  registerUser(RegisterModel model) async {
-    final url = Uri.parse(AppConstants.apiBaseUrl+AppConstants.register);
+  Future<RegistrationResponse> registerUser(RegisterModel model) async {
+    final url = Uri.parse(AppConstants.apiBaseUrl + AppConstants.register);
 
     try {
       final response = await http.post(
@@ -85,7 +88,7 @@ class AuthService {
         body: jsonEncode(model.toJson()),
       );
 
-      if(kDebugMode){
+      if (kDebugMode) {
         log('🔼 Register Sent: ${model.toJson()}');
         log('🔽 Status Code: ${response.statusCode}');
         log('🔽 Response: ${response.body}');
@@ -95,16 +98,33 @@ class AuthService {
       final data = RegistrationResponse.fromJson(json);
 
       if (data.status) {
-        await Preferences.setString(AppConstants.token,data.token!); // ✅ Save token using your utility
+        await Preferences.setString(
+            AppConstants.token, data.token!); // ✅ Save token using your utility
       }
 
       return data;
     } catch (e) {
-      if(kDebugMode){
+      if (kDebugMode) {
         log('❌ Registration failed: $e');
       }
-      return RegistrationResponse(status: false, message: "Something went wrong",token: null, user: null);
+      return RegistrationResponse(
+          status: false,
+          message: "Something went wrong",
+          token: null,
+          user: null);
     }
   }
 
+  Future<List<CityModel>?> getCities(String stateId) async {
+    final url = Uri.parse("${AppConstants.cityList}$stateId");
+
+    final response = await http.get(url);
+    if (response.statusCode == 200) {
+      final decoded = json.decode(response.body);
+      final List data = decoded['data'];
+      List<CityModel> cityList = data.map((json) => CityModel.fromJson(json)).toList();
+    }else{
+      throw Exception("City not found");
+    }
+  }
 }

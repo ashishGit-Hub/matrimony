@@ -1,6 +1,6 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
-import 'package:matrimonial_app/utils/sharepref.dart';
 import '../../../utils/app_constants.dart';
 import '../../../utils/preferences.dart';
 import '../model/religion_model.dart';
@@ -38,7 +38,9 @@ Future<bool> updateReligionDetails({
   final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
   if (token.isEmpty) {
-    print("❌ Token not found!");
+    if (kDebugMode) {
+      print("❌ Token not found!");
+    }
     return false;
   }
 
@@ -57,8 +59,10 @@ Future<bool> updateReligionDetails({
     }),
   );
 
-  print("🔁 Status: ${response.statusCode}");
-  print("🔁 Body: ${response.body}");
+  if (kDebugMode) {
+    print("🔁 Status: ${response.statusCode}");
+    print("🔁 Body: ${response.body}");
+  }
 
   if (response.statusCode == 200) {
     final json = jsonDecode(response.body);

@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:matrimonial_app/features/match_module/model/match_model.dart';
 import 'package:matrimonial_app/providers/user_provider.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
@@ -10,19 +11,27 @@ import 'package:provider/provider.dart';
 import '../../home_module/view/home_screen.dart';
 
 class FinalStepScreen extends StatefulWidget {
-  const FinalStepScreen({super.key});
+  final bool isRegistrationScreen;
+  const FinalStepScreen({super.key, this.isRegistrationScreen = true});
 
   @override
   State<FinalStepScreen> createState() => _FinalStepScreenState();
 }
 
 class _FinalStepScreenState extends State<FinalStepScreen> {
-  final ImagePicker _picker = ImagePicker();
   final List<XFile> _images = [];
+  List<GalleryModel> uploadedImages = [];
   bool _isUploading = false;
 
+  @override
+  void initState() {
+    super.initState();
+    _loadExisting();
+  }
+
   Future<void> _pickImages() async {
-    final List<XFile> selected = await _picker.pickMultiImage();
+    final ImagePicker picker = ImagePicker();
+    final List<XFile> selected = await picker.pickMultiImage();
     if (selected.isNotEmpty) {
       setState(() => _images.addAll(selected));
     }
@@ -31,6 +40,20 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
   void _removeImage(int index) {
     setState(() {
       _images.removeAt(index);
+    });
+  }
+
+  Future<void> _loadExisting() async {
+    final user = await Provider.of<UserProvider>(context, listen: false).getUserDetails();
+
+    setState(() {
+      if(user?.gallery != null && user?.gallery?.length != 0){
+        uploadedImages = user!.gallery!;
+      }
+      // if (user?.images != null && user?.images?.toString().isNotEmpty == true) {
+      //   existingImageUrl = 'https://matrimony.sqcreation.site/${user?.images}';
+      // }
+      // isLoading = false;
     });
   }
 
@@ -50,27 +73,29 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
 
     if (response.status) {
       if (mounted) {
-        showDialog(
-          context: context,
-          builder: (_) => AlertDialog(
-            title: const Text("Profile Completed"),
-            content:
-                const Text("Your profile has been successfully completed."),
-            actions: [
-              TextButton(
-                onPressed: () {
-                  Navigator.pop(context);
-                  Preferences.clearKeyData(AppConstants.registrationStep);
-                  Navigator.pushReplacement(
-                    context,
-                    MaterialPageRoute(builder: (_) => const HomeScreen()),
-                  );
-                },
-                child: const Text("Go to Home"),
-              ),
-            ],
-          ),
-        );
+        if(widget.isRegistrationScreen){
+          showDialog(
+            context: context,
+            builder: (_) => AlertDialog(
+              title: const Text("Profile Completed"),
+              content:
+              const Text("Your profile has been successfully completed."),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                    Preferences.clearKeyData(AppConstants.registrationStep);
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (_) => const HomeScreen()),
+                    );
+                  },
+                  child: const Text("Go to Home"),
+                ),
+              ],
+            ),
+          );
+        }
       }
     } else {
       _showError("Upload failed. Try again.");
@@ -87,7 +112,7 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
       return Scaffold(
         appBar: AppBar(
-          title: const Text("Final Step"),
+          title: const Text("Gallery"),
           backgroundColor: Colors.orange,
         ),
         body: Padding(
@@ -162,7 +187,7 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
                   ),
                   child: _isUploading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Upload & Finish"),
+                      : Text(widget.isRegistrationScreen ? "Upload & Finish" : "Update"),
                 ),
               ),
             ],

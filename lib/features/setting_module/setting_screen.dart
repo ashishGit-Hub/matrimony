@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/features/register_module/view/about_yourself_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
+import 'package:matrimonial_app/features/register_module/view/final_registration_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/personal_details.dart';
 import 'package:matrimonial_app/features/register_module/view/proffesionaldetail_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/releigon_details.dart';
@@ -10,7 +11,6 @@ class SettingsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
     return Scaffold(
       appBar: AppBar(
@@ -32,25 +32,31 @@ class SettingsScreen extends StatelessWidget {
               context,
               icon: Icons.self_improvement,
               title: 'Religion Details',
-              screen: ReligionDetailsScreen(),
+              screen: ReligionDetailsScreen(isRegisteredScreen: false),
             ),
             _buildSettingsCard(
               context,
               icon: Icons.info,
               title: 'Personal Details',
-              screen: PersonalScreen(),
+              screen: PersonalScreen(isRegisteredScreen: false),
             ),
             _buildSettingsCard(
               context,
               icon: Icons.work_outline,
               title: 'Professional Details',
-              screen: ProfessionalDetailsScreen(),
+              screen: ProfessionalDetailsScreen(isRegisteredScreen: false,),
             ),
             _buildSettingsCard(
               context,
               icon: Icons.edit_note,
               title: 'About Yourself',
-              screen: AboutYourselfScreen(),
+              screen: AboutYourselfScreen(isRegistrationScreen: false),
+            ),
+            _buildSettingsCard(
+              context,
+              icon: Icons.edit_note,
+              title: 'Gallery',
+              screen: FinalStepScreen(isRegistrationScreen: false),
             ),
           ],
         ),

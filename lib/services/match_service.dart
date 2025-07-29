@@ -3,6 +3,7 @@ import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
+import 'package:matrimonial_app/models/receive_match.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -254,7 +255,7 @@ class MatchService {
       throw Exception('Failed to load sent interests');
     }
   }
-  static Future<List<MatchModel>> fetchReceivedInterests() async {
+  static Future<List<ReceiveInterest>> fetchReceivedInterests() async {
     final token = Preferences.getString(AppConstants.token, defaultValue: "");
 
     final response = await http.get(
@@ -275,8 +276,8 @@ class MatchService {
       final List<dynamic> dataList = jsonData['data'] ?? [];
 
       // ✅ Extract 'sender' from each item and map to MatchModel
-      return dataList.map<MatchModel>((item) {
-        return MatchModel.fromJson(item['sender']);
+      return dataList.map<ReceiveInterest>((item) {
+        return ReceiveInterest.fromJson(item);
       }).toList();
     } else {
       throw Exception('Failed to load received interests');
@@ -286,10 +287,10 @@ class MatchService {
   static const String baseUrl = 'http://matrimony.sqcreation.site/api';
 
   static Future<bool> acceptInterest(String id) async {
-    final prefs = await SharedPreferences.getInstance();
-    final token = prefs.getString('token');
+    final token = Preferences.getString(AppConstants.token);
 
     final url = Uri.parse('$baseUrl/interests/accept/$id');
+    log("URL $url");
     final response = await http.post(
       url,
       headers: {

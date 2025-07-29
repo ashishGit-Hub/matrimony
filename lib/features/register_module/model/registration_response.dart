@@ -1,3 +1,5 @@
+import 'package:matrimonial_app/features/match_module/model/match_model.dart';
+
 class RegistrationResponse {
   final bool status;
   final String message;
@@ -44,6 +46,7 @@ class User {
   final CompanyType? companyType;
   final Religion? relegion;
   final Caste? caste;
+  final List<GalleryModel>? gallery;
 
   User({
     required this.name,
@@ -64,6 +67,7 @@ class User {
     required this.companyType,
     required this.relegion,
     required this.caste,
+    required this.gallery,
   });
 
   factory User.empty() {
@@ -85,7 +89,8 @@ class User {
       jobType: null,
       companyType: null,
       relegion: null,
-      caste: null
+      caste: null,
+      gallery: null
     );
   }
 
@@ -99,7 +104,7 @@ class User {
       height: json['height']?.toString() ?? '',
       weight: json['weight']?.toString() ?? '',
       myself: json['myself'],
-      images: json['images'],
+      images: json['profile'],
       gender: json['gender'],
       profileFor: json['profileFor'] != null
           ? ProfileFor.fromJson(json['profileFor'])
@@ -121,6 +126,9 @@ class User {
           : null,
       relegion: json['relegion'] != null ? Religion.fromJson(json['relegion']) : null,
       caste: json['caste'] != null ? Caste.fromJson(json['caste']) : null,
+      gallery: json['galleries'] != null
+          ? List<GalleryModel>.from(json['galleries'].map((x) => GalleryModel.fromJson(x)))
+          : null,
     );
   }
 }

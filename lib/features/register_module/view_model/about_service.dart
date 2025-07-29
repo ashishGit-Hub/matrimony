@@ -1,15 +1,16 @@
 import 'dart:convert';
+import 'dart:developer';
 import 'dart:io';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
-import 'package:matrimonial_app/utils/sharepref.dart';
 import 'package:path/path.dart';
 
 class AboutService {
   static const String baseUrl = 'https://matrimony.sqcreation.site/api';
 
-  static Future<bool> updateAbout({
+  static Future<Map<String,dynamic>> updateAbout({
     required String myself,
     File? imageFile,
   }) async {
@@ -32,19 +33,36 @@ class AboutService {
       final streamedResponse = await request.send();
       final response = await http.Response.fromStream(streamedResponse);
 
-      print("📤 Status Code: ${response.statusCode}");
-      print("📤 Response: ${response.body}");
+      if (kDebugMode) {
+        log("📤 Status Code: ${response.statusCode}");
+        log("📤 Response: ${response.body}");
+      }
+
 
       if (response.statusCode == 200) {
         final json = jsonDecode(response.body);
-        return json['status'] == true;
+        return {
+          "status": json['status'],
+          "message": json['message']
+        };
       } else {
-        print("❌ Server Error: ${response.body}");
-        return false;
+        if(kDebugMode){
+          print("❌ Server Error: ${response.body}");
+        }
+        final json = jsonDecode(response.body);
+        return {
+          "status": json['status'],
+          "message": json['message'] ?? json['errors']['myself'][0]
+        };
       }
     } catch (e) {
-      print("❌ Exception: $e");
-      return false;
+      if(kDebugMode){
+        log("❌ Exception: $e");
+      }
+      return {
+        "status": false,
+        "message": e
+      };
     }
   }
 }

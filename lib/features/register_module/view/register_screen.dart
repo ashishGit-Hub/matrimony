@@ -167,10 +167,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                         style: AppTextStyle.regularInterText(
                             color: ColorConstant.signupcolor),
                         recognizer: TapGestureRecognizer()
-                          ..onTap = () => Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (_) => LoginScreen()),
-                          ),
+                          ..onTap = () => Navigator.pop(context),
                       ),
                       const TextSpan(text: " here."),
                     ],
@@ -257,7 +254,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (_) => BasicDetailsScreen(isRegisteredScreen: true)));
+                builder: (_) => BasicDetailsScreen()));
       } else {
         ScaffoldMessenger.of(context)
             .showSnackBar(SnackBar(content: Text(response.message)));

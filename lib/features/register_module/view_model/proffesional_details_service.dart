@@ -1,7 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:matrimonial_app/features/register_module/model/proffesional_detail_model.dart';
-import 'package:matrimonial_app/utils/sharepref.dart';
 
 import '../../../utils/app_constants.dart';
 import '../../../utils/preferences.dart';

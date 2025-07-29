@@ -25,7 +25,7 @@ class UserService {
 
       if(kDebugMode){
         log('API Url: $url');
-        log("Headers: ${response.body}");
+        log("Response Body: ${response.body}");
       }
 
       if (response.statusCode == 200) {
@@ -59,15 +59,16 @@ class UserService {
     Preferences.setString('email', user['email'] ?? '');
     Preferences.setString('mobile', user['mobile'] ?? '');
     Preferences.setString('age', user['age'] ?? '');
-    Preferences.setString('dob', user['dob'] ?? '');
+    Preferences.setString('dob', user['dob'].toString() ?? '');
     Preferences.setString('height', user['height'] ?? '');
     Preferences.setString('weight', user['weight'] ?? '');
     Preferences.setString('myself', user['myself'] ?? '');
     Preferences.setString('gender', user['gender'] ?? '');
     Preferences.setString('image', user['images'] ?? '');
 
-    Preferences.setString('state', jsonEncode(user['state']).toString());
-    Preferences.setString('city', jsonEncode(user['city']).toString());
+
+    Preferences.setString('state', jsonEncode(user['state']['name'] ?? "").toString());
+    Preferences.setString('city', jsonEncode(user['city']['name'] ?? "").toString());
 
     // Nested fields
     Preferences.setString('profileFor', user['profileFor']?['name'] ?? '');
@@ -94,8 +95,13 @@ class UserService {
     request.headers['Accept'] = 'application/json';
 
     for (var image in images) {
-      request.files.add(await http.MultipartFile.fromPath('gallery[]', image.path));
+      request.files.add(await http.MultipartFile.fromPath('images[]', image.path));
     }
+
+    log("${request.files.first.filename}");
+    log("${request.files.first.length}");
+    log("${request.files.first.contentType}");
+    log("${request.files.first.field}");
 
     try {
       var streamedResponse = await request.send();

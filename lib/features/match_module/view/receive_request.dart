@@ -1,11 +1,11 @@
+
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/providers/match_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:matrimonial_app/features/match_module/model/match_model.dart';
 import 'package:matrimonial_app/features/match_module/view/profiledetailscreen.dart';
 
 class ReceiveMatchesPage extends StatelessWidget {
-  const ReceiveMatchesPage({Key? key}) : super(key: key);
+  const ReceiveMatchesPage({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -66,7 +66,7 @@ class ReceiveMatchesPage extends StatelessWidget {
         itemCount: receivedRequests.length,
         itemBuilder: (context, index) {
           final match = receivedRequests[index];
-          final imagePath = "https://matrimony.sqcreation.site/${match.profile ?? ""}";
+          final imagePath = "https://matrimony.sqcreation.site/${match.sender.profile ?? ""}";
 
           return Card(
             margin: const EdgeInsets.only(bottom: 16),
@@ -83,7 +83,7 @@ class ReceiveMatchesPage extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                           builder: (context) => ProfileDetailScreen(
-                            userId: match.id?.toString() ?? '',
+                            userId: match.sender.id?.toString() ?? '',
                           ),
                         ),
                       );
@@ -91,7 +91,7 @@ class ReceiveMatchesPage extends StatelessWidget {
                     child: CircleAvatar(
                       radius: 30,
                       backgroundColor: Colors.grey[200],
-                      backgroundImage: match.profile?.isNotEmpty == true
+                      backgroundImage: match.sender.profile?.isNotEmpty == true
                           ? NetworkImage(imagePath)
                           : const AssetImage('assets/images/default_image.png') as ImageProvider,
                     ),
@@ -102,16 +102,16 @@ class ReceiveMatchesPage extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          match.name ?? "--",
+                          match.sender.name ?? "--",
                           style: const TextStyle(
                             fontWeight: FontWeight.bold,
                             fontSize: 18,
                           ),
                         ),
-                        if (match.age != null && match.age != "0")
-                          Text('Age: ${match.age}', style: TextStyle(color: Colors.grey[700])),
-                        if (match.city != null)
-                          Text('City: ${match.city}', style: TextStyle(color: Colors.grey[700])),
+                        if (match.sender.age != null && match.sender.age != "0")
+                          Text('Age: ${match.sender.age}', style: TextStyle(color: Colors.grey[700])),
+                        if (match.sender.city != null)
+                          Text('City: ${match.sender.city}', style: TextStyle(color: Colors.grey[700])),
                         const SizedBox(height: 8),
                         Row(
                           children: [
@@ -125,14 +125,14 @@ class ReceiveMatchesPage extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 final success = await matchProvider.acceptInterest(
-                                  match.id?.toString() ?? '',
+                                  match.interestId.toString() ?? '',
                                 );
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(success
-                                        ? "Accepted ${match.name}"
-                                        : "Failed to accept ${match.name}"),
+                                        ? "Accepted ${match.sender.name}"
+                                        : "Failed to accept ${match.sender.name}"),
                                   ),
                                 );
                               },
@@ -149,14 +149,14 @@ class ReceiveMatchesPage extends StatelessWidget {
                               ),
                               onPressed: () async {
                                 final success = await matchProvider.rejectInterest(
-                                  match.id?.toString() ?? '',
+                                  match.sender.id?.toString() ?? '',
                                 );
 
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
                                     content: Text(success
-                                        ? "Rejected ${match.name}"
-                                        : "Failed to reject ${match.name}"),
+                                        ? "Rejected ${match.sender.name}"
+                                        : "Failed to reject ${match.sender.name}"),
                                   ),
                                 );
                               },

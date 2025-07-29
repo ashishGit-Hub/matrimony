@@ -7,7 +7,8 @@ import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 
 class ProfessionalDetailsScreen extends StatefulWidget {
-  const ProfessionalDetailsScreen({super.key});
+  final bool isRegisteredScreen;
+  const ProfessionalDetailsScreen({super.key, this.isRegisteredScreen = true});
 
   @override
   ProfessionalDetailsScreenState createState() => ProfessionalDetailsScreenState();
@@ -116,10 +117,14 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
       Preferences.setString('companyType', selectedCompanyType!.name);
       Preferences.setString('occupation', selectedOccupation!.name);
       Preferences.setString('annualIncome', selectedAnnualIncome!.range);
-
       Preferences.setString(AppConstants.registrationStep, "Sixth");
-
-      Navigator.push(context, MaterialPageRoute(builder: (_) => AboutYourselfScreen()));
+      if(widget.isRegisteredScreen){
+        Navigator.push(context, MaterialPageRoute(builder: (_) => AboutYourselfScreen()));
+      }else{
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text("Professional Details updated successfully")),
+        );
+      }
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text("Failed to submit. Please try again.")),
@@ -214,7 +219,7 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
           ),
           child: isLoading
               ? CircularProgressIndicator(color: Colors.white)
-              : Text("Continue", style: TextStyle(color: Colors.white70)),
+              : Text(widget.isRegisteredScreen ? "Continue" : "Update", style: TextStyle(color: Colors.white70)),
         ),
       ),
     );
