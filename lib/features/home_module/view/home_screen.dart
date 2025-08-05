@@ -1,12 +1,12 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/core/constant/app_textstyle.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
 import 'package:matrimonial_app/features/chat_module/view/chat_screen.dart';
 import 'package:matrimonial_app/features/home_module/view/change_passwordscreen.dart';
+import 'package:matrimonial_app/features/home_module/view/search_screen.dart';
 import 'package:matrimonial_app/features/match_module/view/match_screen.dart';
 import 'package:matrimonial_app/features/profile_module/view/profile_screen.dart';
+import 'package:matrimonial_app/features/register_module/model/registration_response.dart';
 import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
 import 'package:matrimonial_app/features/setting_module/setting_screen.dart';
 import 'package:matrimonial_app/providers/user_provider.dart';
@@ -21,6 +21,7 @@ class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key, this.username = "Teja"});
 
   @override
+
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
@@ -31,17 +32,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
-    log("Home Screen Init State");
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Provider.of<UserProvider>(context, listen: false).getUserDetails(); // ✅ call properly
+    });
   }
 
-  @override
   Widget build(BuildContext context) {
+
+
     final List<Widget> screens = [
       HomeContent(username: widget.username, scaffoldKey: _scaffoldKey),
       const MatchesScreen(),
       ChatScreen(),
       SettingsScreen(),
     ];
+
 
     return Scaffold(
       key: _scaffoldKey,
@@ -66,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 }
 
-class HomeContent extends StatefulWidget {
+class HomeContent extends StatelessWidget {
   final String username;
   final GlobalKey<ScaffoldState> scaffoldKey;
 
@@ -77,72 +82,77 @@ class HomeContent extends StatefulWidget {
   });
 
   @override
-  State<HomeContent> createState() => _HomeContentState();
-}
-
-class _HomeContentState extends State<HomeContent> {
-
-  @override
-  void initState() {
-    super.initState();
-    log("API Call from Home Screen");
-    Provider.of<UserProvider>(context, listen: false).getUserDetails();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    return Consumer(builder: (context, userProvider, child){
-      return SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              /// --- Header Row ---
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  GestureDetector(
-                    onTap: () => widget.scaffoldKey.currentState?.openDrawer(), // 👈 Opens drawer
-                    child: Row(
-                      children: [
-                        const CircleAvatar(
-                          radius: 25,
-                          backgroundImage: AssetImage("assets/images/user.png"),
-                        ),
-                        const SizedBox(width: 10),
-                        Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const Text("Welcome,", style: TextStyle(fontSize: 14)),
-                            Text(widget.username,
-                                style: const TextStyle(
-                                    fontSize: 20, fontWeight: FontWeight.bold)),
-                          ],
-                        ),
-                      ],
-                    ),
+    final userProvider = Provider.of<UserProvider>(context);
+    final user = userProvider.user;
+    return SafeArea(
+      child: SingleChildScrollView(
+        padding: const EdgeInsets.all(20),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            /// --- Header Row ---
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                GestureDetector(
+                  child: Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 25,
+                        backgroundImage: user != null && user!.images != null && user!.images!.isNotEmpty
+                            ? NetworkImage(user!.images!)
+                            : AssetImage("assets/images/user.png") as ImageProvider,
+
+                      ),
+                      const SizedBox(width: 10),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          const Text("Welcome,", style: TextStyle(fontSize: 14)),
+                          Text(
+                            user?.name?.isNotEmpty == true ? user!.name! : "Guest",
+                            style: const TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold
+                            ),
+                          )
+                        ],
+                      ),
+                    ],
                   ),
-                  GestureDetector(
-                    onTap: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => NotificationListScreen(), // Your notification screen
-                        ),
-                      );
-                    },
-                    child: Stack(
-                      alignment: Alignment.topRight,
+                ),
+
+                /// ✅ Fixed Icon Row
+                Row(
+                  children: [
+                    /// 🔍 Search icon
+                    IconButton(
+                      icon: const Icon(Icons.search, size: 28, color: Colors.black87),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(builder: (_) => SearchScreen()),
+                        );
+                      },
+                    ),
+
+                    /// 🔔 Notification icon with badge
+                    Stack(
                       children: [
-                        const Icon(
-                          Icons.notifications,
-                          size: 28,
-                          color: Color(0xFFFE6D00), // or use your ColorConstant.notifyColor
+                        IconButton(
+                          icon: const Icon(Icons.notifications,
+                              size: 28, color: Color(0xFFFE6D00)),
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                  builder: (_) => NotificationListScreen(userId: 2)),
+                            );
+                          },
                         ),
                         Positioned(
-                          top: 0,
-                          right: 0,
+                          top: 8,
+                          right: 8,
                           child: CircleAvatar(
                             radius: 8,
                             backgroundColor: Colors.green,
@@ -154,133 +164,139 @@ class _HomeContentState extends State<HomeContent> {
                         ),
                       ],
                     ),
-                  ),
-
-                ],
-              ),
-
-              const SizedBox(height: 20),
-
-              const TextField(
-                decoration: InputDecoration(
-                  hintText: "Search by criteria",
-                  prefixIcon: Icon(Icons.search),
-                  contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
-                  border: OutlineInputBorder(
-                      borderRadius: BorderRadius.all(Radius.circular(12))),
-                  filled: true,
-                  fillColor: Colors.white,
-                ),
-              ),
-
-              const SizedBox(height: 20),
-
-              /// --- Profile Progress Box ---
-              Container(
-                height: 150,
-                width: double.infinity,
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFFFF3E9),
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const CircleAvatar(
-                      radius: 30,
-                      backgroundImage: AssetImage("assets/images/user.png"),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text("Oops! Your profile is inprogress.",
-                              style: AppTextStyle.regularInterText(fontSize: 14)),
-                          Text("Complete now to get more matches.",
-                              style: AppTextStyle.regularInterText(fontSize: 14)),
-                          const SizedBox(height: 10),
-                          Stack(
-                            children: [
-                              Container(
-                                height: 12,
-                                decoration: BoxDecoration(
-                                  color: Colors.grey.shade300,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                              ),
-                              Container(
-                                height: 12,
-                                width: 100,
-                                decoration: BoxDecoration(
-                                  color: Colors.orange,
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                alignment: Alignment.topCenter,
-                                child: const Text(
-                                  "40%",
-                                  style: TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(height: 10),
-                          Text("Complete Now",
-                              style: AppTextStyle.mediumInterText(
-                                color: ColorConstant.nowColor,
-                                fontSize: 14,
-                                decoration: TextDecoration.underline,
-                              )),
-                        ],
-                      ),
-                    ),
                   ],
                 ),
+              ],
+            ),
+
+
+
+
+
+
+
+
+            // const TextField(
+            //   decoration: InputDecoration(
+            //     hintText: "Search by criteria",
+            //     prefixIcon: Icon(Icons.search),
+            //     contentPadding: EdgeInsets.symmetric(vertical: 0, horizontal: 16),
+            //     border: OutlineInputBorder(
+            //         borderRadius: BorderRadius.all(Radius.circular(12))),
+            //     filled: true,
+            //     fillColor: Colors.white,
+            //   ),
+            // ),
+
+            const SizedBox(height: 20),
+
+            /// --- Profile Progress Box ---
+            Container(
+              height: 150,
+              width: double.infinity,
+              padding: const EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: const Color(0xFFFFF3E9),
+                borderRadius: BorderRadius.circular(16),
               ),
-
-              const SizedBox(height: 20),
-
-              /// --- Status Grid ---
-              GridView.count(
-                crossAxisCount: 2,
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                mainAxisSpacing: 5,
-                crossAxisSpacing: 10,
-                childAspectRatio: 183 / 137,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  statusCard("5", "Viewed You", ColorConstant.gridColorOne, 'assets/images/eye.png'),
-                  statusCard("5", "Sent Request", ColorConstant.gridColortwo, 'assets/images/tele.png'),
-                  statusCard("5", "Received Request", ColorConstant.gridColorthree, 'assets/images/message.png'),
-                  statusCard("5", "Request Accepted", ColorConstant.gridColorfour, 'assets/images/rename.png'),
+                  CircleAvatar(
+                    radius: 30,
+                    backgroundImage: user != null && user!.images != null && user!.images!.isNotEmpty
+                        ? NetworkImage(user!.images!)
+                        : AssetImage("assets/images/user.png") as ImageProvider,
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Oops! Your profile is inprogress.",
+                            style: AppTextStyle.regularInterText(fontSize: 14)),
+                        Text("Complete now to get more matches.",
+                            style: AppTextStyle.regularInterText(fontSize: 14)),
+                        const SizedBox(height: 10),
+                        Stack(
+                          children: [
+                            Container(
+                              height: 12,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade300,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                            ),
+                            Container(
+                              height: 12,
+                              width: 100,
+                              decoration: BoxDecoration(
+                                color: Colors.orange,
+                                borderRadius: BorderRadius.circular(10),
+                              ),
+                              alignment: Alignment.topCenter,
+                              child: const Text(
+                                "40%",
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 10),
+                        Text("Complete Now",
+                            style: AppTextStyle.mediumInterText(
+                              color: ColorConstant.nowColor,
+                              fontSize: 14,
+                              decoration: TextDecoration.underline,
+                            )),
+                      ],
+                    ),
+                  ),
                 ],
               ),
+            ),
 
-              const SizedBox(height: 25),
+            const SizedBox(height: 20),
 
-              const Text("Recommended Matches",
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-              const SizedBox(height: 15),
-              Container(
-                height: 100,
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                alignment: Alignment.center,
-                child: const Text("Match cards go here"),
-              ),
-            ],
-          ),
+            /// --- Status Grid ---
+            GridView.count(
+              crossAxisCount: 2,
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              mainAxisSpacing: 5,
+              crossAxisSpacing: 10,
+              childAspectRatio: 183 / 137,
+              children: [
+                statusCard("5", "Total Likes", ColorConstant.gridColorOne, 'assets/images/eye.png'),
+                statusCard("5", "Sent Request", ColorConstant.gridColortwo, 'assets/images/tele.png'),
+                statusCard("5", "Received Request", ColorConstant.gridColorthree, 'assets/images/message.png'),
+                statusCard("5", "Not Interested", ColorConstant.gridColorfour, 'assets/images/rename.png'),
+              ],
+            ),
+
+            // const SizedBox(height: 25),
+            //
+            // const Text("Recommended Matches",
+            //     style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+            // const SizedBox(height: 15),
+            // Container(
+            //   height: 100,
+            //   decoration: BoxDecoration(
+            //     color: Colors.white,
+            //     borderRadius: BorderRadius.circular(12),
+            //   ),
+            //   alignment: Alignment.center,
+            //   child: const Text("Match cards go here"),
+            // ),
+          ],
         ),
-      );
-    });
+      ),
+    );
   }
 
   Widget statusCard(String count, String label, Color color, String imagePath) {
@@ -359,4 +375,3 @@ class _HomeContentState extends State<HomeContent> {
     );
   }
 }
-

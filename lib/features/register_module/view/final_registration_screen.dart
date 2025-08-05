@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial_app/features/match_module/model/match_model.dart';
@@ -7,7 +6,6 @@ import 'package:matrimonial_app/providers/user_provider.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:provider/provider.dart';
-
 import '../../home_module/view/home_screen.dart';
 
 class FinalStepScreen extends StatefulWidget {
@@ -44,16 +42,13 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
   }
 
   Future<void> _loadExisting() async {
-    final user = await Provider.of<UserProvider>(context, listen: false).getUserDetails();
+    final user =
+    await Provider.of<UserProvider>(context, listen: false).getUserDetails();
 
     setState(() {
-      if(user?.gallery != null && user?.gallery?.length != 0){
-        uploadedImages = user!.gallery!;
+      if (user?.gallery != null && user!.gallery!.isNotEmpty) {
+        uploadedImages = user.gallery!;
       }
-      // if (user?.images != null && user?.images?.toString().isNotEmpty == true) {
-      //   existingImageUrl = 'https://matrimony.sqcreation.site/${user?.images}';
-      // }
-      // isLoading = false;
     });
   }
 
@@ -73,7 +68,10 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
 
     if (response.status) {
       if (mounted) {
-        if(widget.isRegistrationScreen){
+        await _loadExisting();
+        _images.clear();
+
+        if (widget.isRegistrationScreen) {
           showDialog(
             context: context,
             builder: (_) => AlertDialog(
@@ -94,6 +92,10 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
                 ),
               ],
             ),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Images updated successfully")),
           );
         }
       }
@@ -132,50 +134,68 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              _images.isEmpty
+              (_images.isEmpty && uploadedImages.isEmpty)
                   ? const Text("No images selected yet.")
                   : Expanded(
-                      child: GridView.builder(
-                        itemCount: _images.length,
-                        gridDelegate:
-                            const SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          mainAxisSpacing: 10,
-                          crossAxisSpacing: 10,
+                child: GridView.builder(
+                  itemCount: uploadedImages.length + _images.length,
+                  gridDelegate:
+                  const SliverGridDelegateWithFixedCrossAxisCount(
+                    crossAxisCount: 3,
+                    mainAxisSpacing: 10,
+                    crossAxisSpacing: 10,
+                  ),
+                  itemBuilder: (context, index) {
+                    if (index < uploadedImages.length) {
+
+                      final imageUrl =
+                          'https://matrimony.sqcreation.site/${uploadedImages[index].imagePath}';
+                      return ClipRRect(
+                        borderRadius: BorderRadius.circular(8),
+                        child: Image.network(
+                          imageUrl,
+                          width: double.infinity,
+                          height: double.infinity,
+                          fit: BoxFit.cover,
+                          errorBuilder: (_, __, ___) =>
+                          const Icon(Icons.broken_image),
                         ),
-                        itemBuilder: (context, index) {
-                          return Stack(
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.circular(8),
-                                child: Image.file(
-                                  File(_images[index].path),
-                                  width: double.infinity,
-                                  height: double.infinity,
-                                  fit: BoxFit.cover,
+                      );
+                    } else {
+                      final localIndex = index - uploadedImages.length;
+                      return Stack(
+                        children: [
+                          ClipRRect(
+                            borderRadius: BorderRadius.circular(8),
+                            child: Image.file(
+                              File(_images[localIndex].path),
+                              width: double.infinity,
+                              height: double.infinity,
+                              fit: BoxFit.cover,
+                            ),
+                          ),
+                          Positioned(
+                            top: 4,
+                            right: 4,
+                            child: GestureDetector(
+                              onTap: () => _removeImage(localIndex),
+                              child: Container(
+                                decoration: const BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.black54,
                                 ),
+                                padding: const EdgeInsets.all(4),
+                                child: const Icon(Icons.close,
+                                    size: 18, color: Colors.white),
                               ),
-                              Positioned(
-                                top: 4,
-                                right: 4,
-                                child: GestureDetector(
-                                  onTap: () => _removeImage(index),
-                                  child: Container(
-                                    decoration: const BoxDecoration(
-                                      shape: BoxShape.circle,
-                                      color: Colors.black54,
-                                    ),
-                                    padding: const EdgeInsets.all(4),
-                                    child: const Icon(Icons.close,
-                                        size: 18, color: Colors.white),
-                                  ),
-                                ),
-                              ),
-                            ],
-                          );
-                        },
-                      ),
-                    ),
+                            ),
+                          ),
+                        ],
+                      );
+                    }
+                  },
+                ),
+              ),
               const SizedBox(height: 20),
               SizedBox(
                 width: double.infinity,
@@ -187,7 +207,9 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
                   ),
                   child: _isUploading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : Text(widget.isRegistrationScreen ? "Upload & Finish" : "Update"),
+                      : Text(widget.isRegistrationScreen
+                      ? "Upload & Finish"
+                      : "Update"),
                 ),
               ),
             ],

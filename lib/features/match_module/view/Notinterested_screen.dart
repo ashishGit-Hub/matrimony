@@ -30,10 +30,6 @@ class _NotInterestedpageState extends State<NotInterestedpage> {
     final list = matchProvider.notInterestedList;
 
     return Scaffold(
-      appBar: AppBar(
-
-        backgroundColor: Colors.orange,
-      ),
       body: matchProvider.isLoadingNotInterested
           ? const Center(child: CircularProgressIndicator())
           : list.isEmpty

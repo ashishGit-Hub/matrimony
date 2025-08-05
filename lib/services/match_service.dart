@@ -275,7 +275,7 @@ class MatchService {
       final jsonData = json.decode(response.body);
       final List<dynamic> dataList = jsonData['data'] ?? [];
 
-      // ✅ Extract 'sender' from each item and map to MatchModel
+
       return dataList.map<ReceiveInterest>((item) {
         return ReceiveInterest.fromJson(item);
       }).toList();
@@ -291,6 +291,7 @@ class MatchService {
 
     final url = Uri.parse('$baseUrl/interests/accept/$id');
     log("URL $url");
+    log('interest $id');
     final response = await http.post(
       url,
       headers: {
@@ -347,7 +348,7 @@ class MatchService {
   static Future<bool> revokeNotInterested(String id) async {
     final url = Uri.parse('http://matrimony.sqcreation.site/api/interests/not/revoke/$id');
 
-    final response = await http.post(url); // 👈 using POST
+    final response = await http.post(url);
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);

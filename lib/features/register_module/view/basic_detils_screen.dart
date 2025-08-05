@@ -1,9 +1,7 @@
 import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:matrimonial_app/features/home_module/view/home_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/releigon_details.dart';
 import 'package:matrimonial_app/features/register_module/view_model/basic_detail_service.dart';
 import 'package:matrimonial_app/providers/user_provider.dart';
@@ -36,7 +34,6 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
 
   Future<void> fetchAndPrefill() async {
     var userProvider = Provider.of<UserProvider>(context, listen: false);
-
     var user = await userProvider.getUserDetails();
 
     if (!widget.isRegisteredScreen && user != null) {
@@ -52,10 +49,10 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
         selectedGender = gender == 'male'
             ? 'Male'
             : gender == 'female'
-                ? 'Female'
-                : gender == 'others'
-                    ? 'Others'
-                    : '';
+            ? 'Female'
+            : gender == 'others'
+            ? 'Others'
+            : '';
         isLoading = false;
       });
     } else {
@@ -69,7 +66,6 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
     }
   }
 
-  /// Show SnackBar
   Future<void> showSnackBar(String message, bool isError) async {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -82,7 +78,6 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
     );
   }
 
-  /// Navigate to new screen
   Future<void> navigate(Widget screen) async {
     if (!context.mounted) return;
     Navigator.push(
@@ -94,82 +89,87 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
   @override
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
-      return Scaffold(
-        backgroundColor: Colors.white,
-        appBar: AppBar(
-          systemOverlayStyle: SystemUiOverlayStyle.light,
-          leading: BackButton(color: Colors.black),
-          elevation: 0,
+      return WillPopScope(
+        onWillPop: () async {
+          // Disable back button in registration screen
+          return !widget.isRegisteredScreen;
+        },
+        child: Scaffold(
           backgroundColor: Colors.white,
-          title: const Text("Basic Details",
-              style: TextStyle(color: Colors.black)),
-          centerTitle: true,
-        ),
-        body: isLoading
-            ? const Center(child: CircularProgressIndicator())
-            : Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          appBar: AppBar(
+            systemOverlayStyle: SystemUiOverlayStyle.light,
+            leading: widget.isRegisteredScreen ? null : BackButton(color: Colors.black),
+            elevation: 0,
+            backgroundColor: Colors.white,
+            title: const Text("Basic Details",
+                style: TextStyle(color: Colors.black)),
+            centerTitle: true,
+          ),
+          body: isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : Padding(
+            padding: const EdgeInsets.all(24.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildProgressHeader(),
+                const SizedBox(height: 30),
+                const Text("Please provide your basic details:",
+                    style: TextStyle(fontWeight: FontWeight.bold)),
+                const SizedBox(height: 20),
+                _buildTextField('Age:', ageController, TextInputType.number),
+                const SizedBox(height: 15),
+                const Text('Date of Birth:'),
+                const SizedBox(height: 10),
+                TextField(
+                  controller: dobController,
+                  readOnly: true,
+                  decoration:
+                  const InputDecoration(border: OutlineInputBorder()),
+                  onTap: () async {
+                    FocusScope.of(context).unfocus();
+                    DateTime? pickedDate = await showDatePicker(
+                      context: context,
+                      initialDate: DateTime(2000),
+                      firstDate: DateTime(1900),
+                      lastDate: DateTime.now(),
+                    );
+                    if (pickedDate != null) {
+                      dobController.text =
+                      "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
+                    }
+                  },
+                ),
+                const SizedBox(height: 15),
+                _buildTextField(
+                    'Email ID:', emailController, TextInputType.emailAddress),
+                const SizedBox(height: 15),
+                const Text("Gender:"),
+                const SizedBox(height: 10),
+                Row(
                   children: [
-                    _buildProgressHeader(),
-                    const SizedBox(height: 30),
-                    const Text("Please provide your basic details:",
-                        style: TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 20),
-                    _buildTextField(
-                        'Age:', ageController, TextInputType.number),
-                    const SizedBox(height: 15),
-                    const Text('Date of Birth:'),
-                    const SizedBox(height: 10),
-                    TextField(
-                      controller: dobController,
-                      readOnly: true,
-                      decoration:
-                          const InputDecoration(border: OutlineInputBorder()),
-                      onTap: () async {
-                        FocusScope.of(context).unfocus();
-                        DateTime? pickedDate = await showDatePicker(
-                          context: context,
-                          initialDate: DateTime(2000),
-                          firstDate: DateTime(1900),
-                          lastDate: DateTime.now(),
-                        );
-                        if (pickedDate != null) {
-                          dobController.text =
-                              "${pickedDate.day}-${pickedDate.month}-${pickedDate.year}";
-                        }
-                      },
-                    ),
-                    const SizedBox(height: 15),
-                    _buildTextField('Email ID:', emailController,
-                        TextInputType.emailAddress),
-                    const SizedBox(height: 15),
-                    const Text("Gender:"),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        _buildGenderButton("Male"),
-                        const SizedBox(width: 10),
-                        _buildGenderButton("Female"),
-                        const SizedBox(width: 10),
-                        _buildGenderButton("Others"),
-                      ],
-                    ),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: _handleSubmit,
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
-                        minimumSize: const Size(double.infinity, 50),
-                      ),
-                      child: Text(
-                          widget.isRegisteredScreen ? "Continue" : "Update",
-                          style: TextStyle(color: Colors.white)),
-                    ),
+                    _buildGenderButton("Male"),
+                    const SizedBox(width: 10),
+                    _buildGenderButton("Female"),
+                    const SizedBox(width: 10),
+                    _buildGenderButton("Others"),
                   ],
                 ),
-              ),
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: _handleSubmit,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.green,
+                    minimumSize: const Size(double.infinity, 50),
+                  ),
+                  child: Text(
+                      widget.isRegisteredScreen ? "Continue" : "Update",
+                      style: const TextStyle(color: Colors.white)),
+                ),
+              ],
+            ),
+          ),
+        ),
       );
     });
   }
@@ -233,7 +233,7 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
         },
         style: OutlinedButton.styleFrom(
           backgroundColor:
-              selectedGender == gender ? Colors.orange : Colors.white,
+          selectedGender == gender ? Colors.orange : Colors.white,
         ),
         child: Text(gender, style: const TextStyle(color: Colors.black)),
       ),
@@ -278,7 +278,6 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
         Preferences.setString('dob', dob);
         Preferences.setString('email', email);
         Preferences.setString('gender', gender);
-
         Preferences.setString(AppConstants.registrationStep, "Third");
 
         if (widget.isRegisteredScreen) {
@@ -291,13 +290,7 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
       }
     } catch (e) {
       Navigator.pop(context);
-      showSnackBar('Submission failed: $e', false);
-      // ScaffoldMessenger.of(context).showSnackBar(
-      //   SnackBar(
-      //     content: Text('Submission failed: $e'),
-      //     backgroundColor: Colors.red,
-      //   ),
-      // );
+      showSnackBar('Submission failed: $e', true);
     }
   }
 }

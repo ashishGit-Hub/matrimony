@@ -73,6 +73,10 @@ class MatchProvider extends ChangeNotifier {
   List<ReceiveInterest> get receivedInterests => _receivedInterests;
   bool get isLoadingReceived => _isLoadingReceived;
   String? get errorReceived => _errorReceived;
+  void clearErrorReceived() {
+    _errorReceived = null;
+    notifyListeners();
+  }
 
   Future<void> fetchReceivedInterests() async {
     _isLoadingReceived = true;

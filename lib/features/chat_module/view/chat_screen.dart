@@ -59,26 +59,48 @@ class _ChatScreenState extends State<ChatScreen> {
       ),
       body: chatProvider.isLoadingChats
           ? const Center(child: CircularProgressIndicator())
+          : chatProvider.chatList.isEmpty
+          ? Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(Icons.chat_bubble_outline,
+                size: 60, color: Colors.grey[400]),
+            const SizedBox(height: 16),
+            const Text(
+              "No active chats yet",
+              style: TextStyle(
+                fontSize: 16,
+                color: Colors.grey,
+              ),
+            ),
+          ],
+        ),
+      )
           : ListView.builder(
         itemCount: chatProvider.chatList.length,
         itemBuilder: (context, index) {
           final user = chatProvider.chatList[index];
           return ListTile(
             onTap: () {
-              _openChatDetail(user.chatUserid,user.name, user.image); // ✅ Proper call
+              _openChatDetail(user.chatUserid, user.name, user.image);
             },
             leading: CircleAvatar(
-              backgroundImage: user.image != null ? NetworkImage(user.image!) : null,
+              backgroundImage: user.image != null
+                  ? NetworkImage(user.image!)
+                  : null,
               backgroundColor: Colors.grey[300],
               child: user.image == null
                   ? const Icon(Icons.person, color: Colors.white)
                   : null,
             ),
-            title: Text(user.name, style: const TextStyle(fontWeight: FontWeight.bold)),
+            title: Text(user.name,
+                style: const TextStyle(fontWeight: FontWeight.bold)),
             subtitle: Text(user.lastMessage),
             trailing: Text(
               user.time.split('T').last.substring(0, 5),
-              style: TextStyle(fontSize: 12, color: Colors.grey[600]),
+              style: TextStyle(
+                  fontSize: 12, color: Colors.grey[600]),
             ),
           );
         },

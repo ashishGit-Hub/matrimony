@@ -299,43 +299,24 @@ class _MatchesScreenState extends State<MatchesScreen>
           automaticallyImplyLeading: false,
           backgroundColor: Colors.orange,
           elevation: 0,
-          toolbarHeight: 50,
+          toolbarHeight: 0,
           bottom: PreferredSize(
-            preferredSize: const Size.fromHeight(100),
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 16, right: 16, bottom: 10),
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: "Search by criteria",
-                      prefixIcon: const Icon(Icons.search),
-                      filled: true,
-                      fillColor: Colors.white,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(12),
-                        borderSide: BorderSide.none,
-                      ),
-                    ),
-                  ),
-                ),
-                TabBar(
-                  controller: _tabController,
-                  labelColor: Colors.white,
-                  unselectedLabelColor: Colors.white70,
-                  indicatorColor: Colors.white,
-                  tabs: const [
-                    Tab(text: "Profile"),
-                    Tab(text: "Send"),
-                    Tab(text: "Receive"),
-                    Tab(text: "NotInterested",)
-                  ],
-                ),
+            preferredSize: Size.fromHeight(kToolbarHeight),
+            child: TabBar(
+              controller: _tabController,
+              labelColor: Colors.white,
+              unselectedLabelColor: Colors.white70,
+              indicatorColor: Colors.white,
+              tabs: const [
+                Tab(text: "Profile"),
+                Tab(text: "Send"),
+                Tab(text: "Receive"),
+                Tab(text: "NotInterested"),
               ],
             ),
           ),
         ),
+
         body: TabBarView(
           controller: _tabController,
           children: [

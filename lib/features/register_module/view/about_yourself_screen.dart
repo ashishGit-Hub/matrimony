@@ -23,7 +23,7 @@ class AboutYourselfScreen extends StatefulWidget {
 class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
   final TextEditingController aboutController = TextEditingController();
   final ImagePicker _picker = ImagePicker();
-  XFile? _selectedImage;
+  File? _selectedImage;
   String? existingImageUrl;
   bool isSubmitting = false, isLoading = false;
 
@@ -51,7 +51,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('imagePath', picked.path);
       setState(() {
-        _selectedImage = picked;
+        _selectedImage = picked as File?;
         existingImageUrl = null;
       });
     }

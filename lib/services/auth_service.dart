@@ -72,7 +72,7 @@ class AuthService {
       }
       return RegistrationResponse(
           status: false,
-          message: "something went wrong",
+          message: "Invalid login credentials",
           token: null,
           user: null);
     }

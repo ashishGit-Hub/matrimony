@@ -24,12 +24,12 @@ class _SendMatchesPageState extends State<SendMatchesPage> {
     final sentRequests = matchProvider.sentInterests;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Center(
-          child: Text("Sent Matches", style: TextStyle(color: Colors.white)),
-        ),
-        backgroundColor: Colors.orange,
-      ),
+      // appBar: AppBar(
+      //   title: const Center(
+      //     child: Text("Sent Matches", style: TextStyle(color: Colors.white)),
+      //   ),
+      //   backgroundColor: Colors.orange,
+      // ),
       backgroundColor: Colors.white,
       body: matchProvider.isLoading
           ? const Center(child: CircularProgressIndicator())

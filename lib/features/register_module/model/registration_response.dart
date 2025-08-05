@@ -28,6 +28,7 @@ class RegistrationResponse {
 }
 
 class User {
+  final String? dummyid;
   final String? name;
   final String? email;
   final String mobile;
@@ -49,6 +50,7 @@ class User {
   final List<GalleryModel>? gallery;
 
   User({
+    required this.dummyid,
     required this.name,
     required this.email,
     required this.mobile,
@@ -72,6 +74,7 @@ class User {
 
   factory User.empty() {
     return User(
+      dummyid: '',
       name: '',
       email: '',
       mobile: '',
@@ -96,6 +99,7 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
+      dummyid: json['dummyid'],
       name: json['name'],
       email: json['email'],
       mobile: json['mobile']?.toString() ?? '',
