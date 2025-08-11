@@ -14,10 +14,12 @@ class AppConstants{
   static const String register = '/register';
   static const String login = '/login';
   static const String getUser = '/get-user';
+  static const String home = '$apiBaseUrl/home';
   static const String getMatches = '/get/matches';
   static const String updateGallery = '/update-gallery';
   static const String chatUserList = '$apiBaseUrl/user/chat/list';
   static const String cityList = '$apiBaseUrl/get/city/list/';
+  static const String revokeInterestRequest = '$apiBaseUrl/interests/revoke/';
 
 
 

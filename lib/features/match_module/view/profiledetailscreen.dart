@@ -28,7 +28,11 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   @override
   void initState() {
     super.initState();
-    fetchProfileDetails();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      fetchProfileDetails();
+    });
+
     if(kDebugMode){
       log("Get User Profile");
     }
@@ -54,7 +58,7 @@ class _ProfileDetailScreenState extends State<ProfileDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       appBar: PreferredSize(
         preferredSize: const Size.fromHeight(80),
         child: AppBar(

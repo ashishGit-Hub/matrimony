@@ -133,7 +133,7 @@ class ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
         appBar: AppBar(
           systemOverlayStyle: SystemUiOverlayStyle.light,
           leading: BackButton(color: Colors.black),
-          backgroundColor: Colors.white,
+          backgroundColor: Colors.orange,
           elevation: 0,
           title: const Text("Religion Details",
               style: TextStyle(color: Colors.black)),
@@ -148,10 +148,7 @@ class ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
                   children: [
                     _buildProgressHeader(),
                     const SizedBox(height: 30),
-                    Text(
-                      (userReligionName.isNotEmpty && userCasteName.isNotEmpty)
-                          ? "Please provide your religion details (Current: $userReligionName - $userCasteName):"
-                          : "Please provide your religion details:",
+                    Text("Please provide your religion details",
                       style: const TextStyle(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 20),
@@ -241,7 +238,7 @@ class ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
                         }
                       },
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.green,
+                        backgroundColor: Colors.orange,
                         minimumSize: const Size(double.infinity, 50),
                       ),
                       child: Text(
@@ -268,7 +265,7 @@ class ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
                 value: 0.4,
                 strokeWidth: 4,
                 backgroundColor: Colors.grey[300],
-                valueColor: const AlwaysStoppedAnimation(Colors.green),
+                valueColor: const AlwaysStoppedAnimation(Colors.orange),
               ),
             ),
             const Text("2 of 5", style: TextStyle(fontSize: 12)),
@@ -280,10 +277,9 @@ class ReligionDetailsScreenState extends State<ReligionDetailsScreen> {
           children: [
             Text("Religion Details",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text("Next Step: Personal Details",
-                style: TextStyle(color: Colors.grey)),
+            Text("Next Step: Personal Details"),
             Text("Prev. Step: Basic Details",
-                style: TextStyle(color: Colors.green, fontSize: 12)),
+                style: TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
       ],

@@ -7,12 +7,10 @@ import 'package:matrimonial_app/features/register_module/view/final_registration
 import 'package:matrimonial_app/features/register_module/view/personal_details.dart';
 import 'package:matrimonial_app/features/register_module/view/proffesionaldetail_screen.dart';
 import 'package:matrimonial_app/features/register_module/view/releigon_details.dart';
+import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 import 'package:provider/provider.dart';
-
 import '../../providers/user_provider.dart';
-// import 'package:matrimonial_app/utils/preferences.dart';
-// import 'package:matrimonial_app/features/login/view/login_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   const SettingsScreen({super.key});
@@ -22,6 +20,7 @@ class SettingsScreen extends StatefulWidget {
 }
 
 class _SettingsScreenState extends State<SettingsScreen> {
+
   int _selectedIndex = -1;
 
   void _onItemTapped(int index) {
@@ -31,178 +30,243 @@ class _SettingsScreenState extends State<SettingsScreen> {
   }
 
   @override
-  @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Provider.of<UserProvider>(context, listen: false).getUserDetails(); // ✅ call properly
+    WidgetsBinding.instance.addPostFrameCallback((_)  {
+       Provider.of<UserProvider>(context, listen: false).getUserDetails();
     });
   }
+
+  @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context);
-    final user = userProvider.user;
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('Settings'),
-        backgroundColor: Colors.orange,
-        centerTitle: true,
-      ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: ListView(
-          children: [
-            /// Header
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                CircleAvatar(
-                  radius: 20,
-                  backgroundColor: Colors.grey,
-                      backgroundImage: user != null && user!.images != null && user!.images!.isNotEmpty
-        ? NetworkImage(user!.images!)
-              : AssetImage("assets/images/user.png") as ImageProvider,
-                ),
-                const SizedBox(width: 10),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children:  [
-                      Text(
-                        user?.name?.isNotEmpty == true ? user!.name! : "Guest",
-                        style: const TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold
+
+    return Consumer<UserProvider>(
+        builder: (context, userProvider, child){
+          return Scaffold(
+            backgroundColor: Colors.grey[100],
+            appBar: AppBar(
+              title: const Text('Settings'),
+              backgroundColor: Colors.orange,
+              centerTitle: true,
+              elevation: 1,
+            ),
+            body: SingleChildScrollView(
+              child: Column(
+                children: [
+                  // User Profile Card
+                  Container(
+                    width: double.infinity,
+                    margin: const EdgeInsets.all(18),
+                    child: Card(
+                      elevation: 3,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      color: Colors.white,
+                      child: Padding(
+                        padding: const EdgeInsets.all(22.0),
+                        child: Row(
+                          children: [
+                            CircleAvatar(
+                              radius: 35,
+                              backgroundColor: Colors.grey[300],
+                              backgroundImage: (userProvider.user != null &&
+                                  userProvider.user?.images != null &&
+                                  userProvider.user?.images!.isNotEmpty == true)
+                                  ? NetworkImage("${AppConstants.baseUrl}/${userProvider.user!.images!}")
+                                  : const AssetImage("assets/images/user.png")
+                              as ImageProvider,
+                            ),
+                            const SizedBox(width: 20),
+                            Expanded(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    userProvider.user?.name?.isNotEmpty == true
+                                        ? userProvider.user!.name!
+                                        : "Guest",
+                                    style: const TextStyle(
+                                      fontSize: 22,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.black87,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    "Id: ${userProvider.user?.dummyid?.toString() ?? 'N/A'}",
+                                    style: TextStyle(
+                                      fontSize: 14,
+                                      color: Colors.grey[600],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            ElevatedButton.icon(
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor: Colors.orange,
+                                padding: const EdgeInsets.symmetric(
+                                    horizontal: 18, vertical: 10),
+                                shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                              icon: const Icon(Icons.star, size: 18, color: Colors.white),
+                              onPressed: () {
+                                // Handle Upgrade button
+                              },
+                              label: const Text(
+                                'Upgrade',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ],
                         ),
                       ),
-                      SizedBox(height: 2),
-
-                        Text(
-                          "Id = ${user?.dummyid?.toString() ?? 'N/A'}",
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-
-                        ],
-                  ),
-                ),
-                const SizedBox(width: 10),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
                     ),
                   ),
-                  onPressed: () {
-                    // Handle Upgrade button
-                  },
-                  child: const Text(
-                    'Upgrade',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 11,
-                    ),
-                  ),
-                ),
-                const SizedBox(width: 10),
-              ],
-            ),
 
-            /// Settings Cards
-            _buildSettingsCard(
-              context,
-              icon: Icons.person,
-              title: 'Basic Details',
-              screen: BasicDetailsScreen(isRegisteredScreen: false),
-            ),
-            _buildSettingsCard(
-              context,
-              icon: Icons.self_improvement,
-              title: 'Religion Details',
-              screen: ReligionDetailsScreen(isRegisteredScreen: false),
-            ),
-            _buildSettingsCard(
-              context,
-              icon: Icons.info,
-              title: 'Personal Details',
-              screen: PersonalScreen(isRegisteredScreen: false),
-            ),
-            _buildSettingsCard(
-              context,
-              icon: Icons.work_outline,
-              title: 'Professional Details',
-              screen: ProfessionalDetailsScreen(isRegisteredScreen: false),
-            ),
-            _buildSettingsCard(
-              context,
-              icon: Icons.edit_note,
-              title: 'About Yourself',
-              screen: AboutYourselfScreen(isRegistrationScreen: false),
-            ),
-            _buildSettingsCard(
-              context,
-              icon: Icons.image,
-              title: 'Gallery',
-              screen: FinalStepScreen(isRegistrationScreen: false),
-            ),
-            _buildSettingsCard(
-              context,
-              icon: Icons.password,
-              title: 'Change Password',
-              screen: ChangePasswordScreen(),
-            ),
+                  // Settings Sections
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 18.0),
+                    child: Column(
 
-            _buildSettingsCard(
-              context,
-              icon: Icons.logout,
-              title: 'Logout',
-              screen: const SizedBox(), // We'll override tap behavior
-              onTapOverride: () {
-                _onItemTapped(9);
-                showDialog(
-                  context: context,
-                  builder: (BuildContext dialogContext) {
-                    return AlertDialog(
-                      title: const Text("Logout"),
-                      content: const Text("Are you sure you want to logout?"),
-                      actions: [
-                        TextButton(
-                          child: const Text("Cancel"),
-                          onPressed: () {
-                            Navigator.of(dialogContext).pop();
-                          },
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        _sectionLabel('Profile'),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.self_improvement,
+                          title: 'Basic Details',
+                          screen: BasicDetailsScreen(isRegisteredScreen: false),
                         ),
-                        TextButton(
-                          onPressed: () async {
-                            // Clear preferences
-                            await Preferences.clearSharPreference();
-
-                            // First, pop the dialog
-                            Navigator.of(dialogContext).pop();
-
-                            // Then navigate from the main context (not dialogContext!)
-                            Navigator.of(context).pushAndRemoveUntil(
-                              MaterialPageRoute(builder: (_) => LoginScreen()),
-                                  (route) => false,
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.self_improvement,
+                          title: 'Religion Details',
+                          screen: ReligionDetailsScreen(isRegisteredScreen: false),
+                        ),
+                        _divider(),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.info,
+                          title: 'Personal Details',
+                          screen: PersonalScreen(isRegisteredScreen: false),
+                        ),
+                        _divider(),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.work_outline,
+                          title: 'Professional Details',
+                          screen: ProfessionalDetailsScreen(isRegisteredScreen: false),
+                        ),
+                        _divider(),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.edit_note,
+                          title: 'About Yourself',
+                          screen: AboutYourselfScreen(isRegistrationScreen: false),
+                        ),
+                        _divider(),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.image,
+                          title: 'Gallery',
+                          screen: FinalStepScreen(isRegistrationScreen: false),
+                        ),
+                        const SizedBox(height: 24),
+                        _sectionLabel('Account'),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.password,
+                          title: 'Change Password',
+                          screen: ChangePasswordScreen(),
+                        ),
+                        _divider(),
+                        const SizedBox(height: 24),
+                        _sectionLabel('App'),
+                        _buildSettingsCard(
+                          context,
+                          icon: Icons.logout,
+                          title: 'Logout',
+                          screen: const SizedBox(),
+                          onTapOverride: () {
+                            _onItemTapped(9);
+                            showDialog(
+                              context: context,
+                              builder: (BuildContext dialogContext) {
+                                return AlertDialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(18),
+                                  ),
+                                  title: const Text(
+                                    "Logout",
+                                    style: TextStyle(fontWeight: FontWeight.bold),
+                                  ),
+                                  content: const Text(
+                                      "Are you sure you want to logout?"),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text("Cancel"),
+                                      onPressed: () {
+                                        Navigator.of(dialogContext).pop();
+                                      },
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        await Preferences.clearSharPreference();
+                                        Navigator.of(dialogContext).pop();
+                                        Navigator.of(context).pushAndRemoveUntil(
+                                          MaterialPageRoute(
+                                              builder: (_) => LoginScreen()),
+                                              (route) => false,
+                                        );
+                                      },
+                                      child: const Text("Logout",
+                                          style: TextStyle(color: Colors.red)),
+                                    ),
+                                  ],
+                                );
+                              },
                             );
                           },
-                          child: const Text("Logout", style: TextStyle(color: Colors.red)),
                         ),
-
+                        const SizedBox(height: 30),
                       ],
-                    );
-                  },
-                );
-              },
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ],
+          );
+
+        });
+  }
+
+  Widget _sectionLabel(String label) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 8, top: 18),
+      child: Text(
+        label,
+        style: const TextStyle(
+          fontSize: 17,
+          fontWeight: FontWeight.bold,
+          color: Colors.orange,
         ),
       ),
     );
   }
+
+  Widget _divider() => const Divider(
+    color: Color(0xFFEEEEEE),
+    thickness: 1.2,
+    height: 0,
+  );
 
   Widget _buildSettingsCard(
       BuildContext context, {
@@ -211,25 +275,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
         required Widget screen,
         VoidCallback? onTapOverride,
       }) {
-    return Card(
-      elevation: 4,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: Icon(icon, color: Colors.orange), // 🔶 changed icon color to orange
-        title: Text(
-          title,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        trailing: const Icon(Icons.arrow_forward_ios, size: 18),
-        onTap: onTapOverride ??
-                () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (_) => screen),
-              );
-            },
+    return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      leading: Icon(icon, color: Colors.orange, size: 28),
+      title: Text(
+        title,
+        style: const TextStyle(
+            fontWeight: FontWeight.w600, fontSize: 15, color: Colors.black87),
       ),
+      trailing: const Icon(Icons.arrow_forward_ios, size: 18, color: Colors.grey),
+      onTap: onTapOverride ??
+              () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => screen),
+            );
+          },
     );
   }
 }

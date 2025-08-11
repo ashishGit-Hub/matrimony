@@ -119,7 +119,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
                 value: 1.0,
                 strokeWidth: 4,
                 backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation(Colors.green),
+                valueColor: AlwaysStoppedAnimation(Colors.orange),
               ),
             ),
             Text("5 of 5", style: TextStyle(fontSize: 12)),
@@ -130,7 +130,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text("About Yourself", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            Text("Prev. Step: Professional Details", style: TextStyle(color: Colors.green, fontSize: 12)),
+            Text("Prev. Step: Professional Details", style: TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
       ],
@@ -147,7 +147,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         leading: BackButton(color: Colors.black),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.orange,
         elevation: 0,
         title: Text("About Yourself", style: TextStyle(color: Colors.black)),
         centerTitle: true,
@@ -196,7 +196,7 @@ class _AboutYourselfScreenState extends State<AboutYourselfScreen> {
               ElevatedButton(
                 onPressed: isSubmitting ? null : _completeRegistration,
                 style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.green,
+                  backgroundColor: Colors.orange,
                   minimumSize: Size(double.infinity, 50),
                 ),
                 child: isSubmitting

@@ -1,4 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/foundation.dart';
+import 'package:matrimonial_app/core/models/ApiResponse.dart';
+import 'package:matrimonial_app/models/not_interest.dart';
+import 'package:matrimonial_app/models/send_request_model.dart';
 import '../../services/match_service.dart';
 import '../features/match_module/model/match_model.dart';
 import '../models/receive_match.dart';
@@ -11,12 +16,12 @@ class MatchProvider extends ChangeNotifier {
 
 
   // 🔽 Internal state for sent interests
-  List<MatchModel> _sentInterests = [];
+  List<SentRequestModel> _sentRequestsList = [];
   bool _isLoading = false;
   String? _errorMessage;
 
   // 🔽 Getters
-  List<MatchModel> get sentInterests => _sentInterests;
+  List<SentRequestModel> get sentRequestList => _sentRequestsList;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
 
@@ -37,10 +42,9 @@ class MatchProvider extends ChangeNotifier {
 
   // 🔽 Send Interest
   Future<bool> sendInterest({
-    required String token,
     required String userId,
   }) async {
-    return await MatchService.sendInterest(token: token, userId: userId);
+    return await MatchService.sendInterest(userId: userId);
   }
 
   // 🔽 Send Not Interested
@@ -57,11 +61,12 @@ class MatchProvider extends ChangeNotifier {
     _errorMessage = null;
     notifyListeners();
 
-    try {
-      _sentInterests = await MatchService.fetchSentInterests();
-    } catch (e) {
-      _errorMessage = e.toString();
-    }
+    // try {
+      _sentRequestsList = await _matchService.fetchSentInterests();
+      notifyListeners();
+    // } catch (e) {
+    //   _errorMessage = e.toString();
+    // }
 
     _isLoading = false;
     notifyListeners();
@@ -85,6 +90,7 @@ class MatchProvider extends ChangeNotifier {
 
     try {
       _receivedInterests = await MatchService.fetchReceivedInterests();
+
     } catch (e) {
       _errorReceived = e.toString();
     }
@@ -108,30 +114,29 @@ class MatchProvider extends ChangeNotifier {
   Future<bool> rejectInterest(String id) async {
     try {
       final result = await MatchService.rejectInterest(id);
-      if (result) {
-        fetchReceivedInterests(); // Refresh list
-      }
       return result;
     } catch (e) {
-      print("Reject Error: $e");
+      if (kDebugMode) {
+        print("Reject Error: $e");
+      }
       return false;
     }
   }
-  List<MatchModel> _notInterestedList = [];
-  bool _isLoadingNotInterested = false;
+  List<NotInterest> _notInterestedList = [];
+  final bool _isLoadingNotInterested = false;
   String? _errorNotInterested;
 
-  List<MatchModel> get notInterestedList => _notInterestedList;
+  List<NotInterest> get notInterestedList => _notInterestedList;
   bool get isLoadingNotInterested => _isLoadingNotInterested;
   String? get errorNotInterested => _errorNotInterested;
 
-  Future<void> fetchNotInterested(String token) async {
+  Future<void> fetchNotInterested() async {
     _isLoading = true;
     _errorMessage = null;
     notifyListeners();
 
     try {
-      _notInterestedList = await MatchService.fetchNotInterestedList(token);
+      _notInterestedList = await MatchService.fetchNotInterestedList();
     } catch (e) {
       _errorMessage = e.toString();
     } finally {
@@ -139,16 +144,22 @@ class MatchProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
-  Future<bool> revokeNotInterested(String id, String token) async {
+  Future<bool> revokeNotInterested(String id) async {
     try {
       final result = await MatchService.revokeNotInterested(id);
-      if (result) {
-        await fetchNotInterested(token); // Refresh after revoke
-      }
       return result;
     } catch (e) {
-      print("❌ Revoke Not Interested Error: $e");
+      if (kDebugMode) {
+        print(" Revoke Not Interested Error: $e");
+      }
       return false;
     }
   }
+
+  // Revoke Interest Request
+
+  Future<ApiResponse> revokeInterestRequest(String requestId){
+      return _matchService.revokeInterestRequest(requestId);
+  }
+
 }

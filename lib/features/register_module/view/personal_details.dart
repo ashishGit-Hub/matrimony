@@ -179,7 +179,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         leading: const BackButton(color: Colors.black),
         elevation: 0,
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.orange,
         title: const Text("Personal Details", style: TextStyle(color: Colors.black)),
         centerTitle: true,
       ),
@@ -202,7 +202,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
                         value: 0.6,
                         strokeWidth: 4,
                         backgroundColor: Colors.grey[300],
-                        valueColor: const AlwaysStoppedAnimation(Colors.green),
+                        valueColor: const AlwaysStoppedAnimation(Colors.orange),
                       ),
                     ),
                     const Text("3 of 5", style: TextStyle(fontSize: 12)),
@@ -290,7 +290,7 @@ class _PersonalScreenState extends State<PersonalScreen> {
         child: ElevatedButton(
           onPressed: isLoading ? null : _submit,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.orange,
             minimumSize: const Size(double.infinity, 50),
           ),
           child: isLoading
