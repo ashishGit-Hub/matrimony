@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/features/register_module/model/registration_response.dart';
+import 'package:matrimonial_app/models/user_model.dart';
 
 import '../../../services/user_service.dart';
 

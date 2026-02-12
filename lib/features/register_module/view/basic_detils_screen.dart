@@ -42,8 +42,8 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
           log("Check Page Parameters: ${widget.isRegisteredScreen.toString()}");
         }
 
-        ageController.text = user.age;
-        dobController.text = user.dob;
+        ageController.text = user.age ?? "";
+        dobController.text = user.dob ?? "";
         emailController.text = user.email ?? "";
         final gender = user.gender?.toLowerCase() ?? '';
         selectedGender = gender == 'male'

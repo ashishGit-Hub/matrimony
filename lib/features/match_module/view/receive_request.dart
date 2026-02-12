@@ -3,26 +3,38 @@ import 'package:matrimonial_app/providers/match_provider.dart';
 import 'package:provider/provider.dart';
 import 'package:matrimonial_app/features/match_module/view/profiledetailscreen.dart';
 
-class ReceiveMatchesPage extends StatelessWidget {
+
+class ReceiveMatchesPage extends StatefulWidget {
   const ReceiveMatchesPage({super.key});
+
+  @override
+  State<ReceiveMatchesPage> createState() => _ReceiveMatchesPageState();
+}
+
+class _ReceiveMatchesPageState extends State<ReceiveMatchesPage> {
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final matchProvider = Provider.of<MatchProvider>(context, listen: false);
+      matchProvider.fetchReceivedInterests();
+    });
+
+  }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<MatchProvider>(
       builder: (context, matchProvider, child) {
-        if (!matchProvider.isLoadingReceived &&
-            matchProvider.receivedInterests.isEmpty &&
-            matchProvider.errorReceived == null) {
-          matchProvider.fetchReceivedInterests();
-        }
 
         final receivedRequests = matchProvider.receivedInterests;
-        final isLoading = matchProvider.isLoadingReceived;
         final error = matchProvider.errorReceived;
 
         return Scaffold(
-          backgroundColor: Colors.white,
-          body: isLoading
+          backgroundColor: Colors.grey[100],
+          body: matchProvider.isLoadingReceived
               ? const Center(child: CircularProgressIndicator())
               : error != null
               ? Center(
@@ -121,7 +133,7 @@ class ReceiveMatchesPage extends StatelessWidget {
                               builder: (context) =>
                                   ProfileDetailScreen(
                                     userId:
-                                    match.sender.id?.toString() ??
+                                    match.sender.id.toString() ??
                                         '',
                                   ),
                             ),
@@ -161,7 +173,7 @@ class ReceiveMatchesPage extends StatelessWidget {
                               ),
                             if (match.sender.city != null)
                               Text(
-                                'City: ${match.sender.city}',
+                                'City: ${match.sender.city?.name}',
                                 style: TextStyle(
                                     color: Colors.grey[700]),
                               ),
@@ -186,7 +198,6 @@ class ReceiveMatchesPage extends StatelessWidget {
                                     final success = await matchProvider.acceptInterest(
                                       match.interestId.toString(),
                                     );
-
                                     ScaffoldMessenger.of(context)
                                         .showSnackBar(
                                       SnackBar(
@@ -195,6 +206,9 @@ class ReceiveMatchesPage extends StatelessWidget {
                                             : "Failed to accept ${match.sender.name}"),
                                       ),
                                     );
+                                    if(success){
+                                      matchProvider.fetchReceivedInterests();
+                                    }
                                   },
                                   child: const Text("Accept"),
                                 ),
@@ -241,3 +255,5 @@ class ReceiveMatchesPage extends StatelessWidget {
     );
   }
 }
+
+

@@ -1,3 +1,6 @@
+import 'dart:developer';
+
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../features/chat_module/model/chat_model.dart';
 import '../services/chat_service.dart';
@@ -17,11 +20,12 @@ class ChatProvider extends ChangeNotifier {
   Future<void> loadChats() async {
     _isLoadingChats = true;
     notifyListeners();
-
     try {
       _chatList = await ChatService.fetchChats();
     } catch (e) {
-      print('Error loading chats: $e');
+      if (kDebugMode) {
+        log('Error loading chats: $e');
+      }
     } finally {
       _isLoadingChats = false;
       notifyListeners();

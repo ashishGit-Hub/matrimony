@@ -22,7 +22,7 @@ class MatchResponse {
 
 
 class MatchModel {
-  final String? id;
+  final String id;
   final String? interestId;
   final String? dummyId;
   String? name;
@@ -51,7 +51,7 @@ class MatchModel {
   List<GalleryModel>? galleries;
 
   MatchModel({
-    this.id,
+    required this.id,
     this.interestId,
     this.dummyId,
     this.name,
@@ -80,7 +80,7 @@ class MatchModel {
 
   factory MatchModel.fromJson(Map<String, dynamic> json) {
     return MatchModel(
-      id: json['id']?.toString(),
+      id: json['id'].toString(),
       interestId: json['interest_id']?.toString(),
       dummyId: json['dummyid'],
       name: json['name'],

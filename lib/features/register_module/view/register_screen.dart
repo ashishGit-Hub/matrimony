@@ -1,14 +1,13 @@
-import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/core/constant/app_textstyle.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
 import 'package:matrimonial_app/core/firebase/firebase_notification_service.dart';
-import 'package:matrimonial_app/features/login_module/view/login_screen.dart';
 import 'package:matrimonial_app/features/register_module/model/register_model.dart';
 import 'package:matrimonial_app/features/register_module/view/basic_detils_screen.dart';
 import 'package:matrimonial_app/features/register_module/view_model/profile_service.dart';
+import 'package:matrimonial_app/models/user_model.dart';
 import 'package:matrimonial_app/providers/auth_provider.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
@@ -249,7 +248,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
       if (response.status) {
         // Set Current Step
         Preferences.setString(AppConstants.registrationStep, "Second");
-        Navigator.push(
+        Navigator.pushReplacement(
             context,
             MaterialPageRoute(
                 builder: (_) => BasicDetailsScreen()));

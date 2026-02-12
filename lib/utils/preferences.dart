@@ -1,4 +1,5 @@
 
+import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Preferences {
@@ -38,4 +39,14 @@ class Preferences {
   static Future<void> clearKeyData(String key) async {
     await pref.remove(key);
   }
+
+  static Future<void> setToken(String value) async {
+    await pref.setString(AppConstants.token, value);
+  }
+
+  static String getToken() {
+    return pref.getString(AppConstants.token) ?? "";
+  }
+
+
 }

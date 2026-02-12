@@ -5,6 +5,7 @@ import 'package:http/http.dart' as http;
 import 'package:image_picker/image_picker.dart';
 import 'package:matrimonial_app/core/models/ApiResponse.dart';
 import 'package:matrimonial_app/features/register_module/model/registration_response.dart';
+import 'package:matrimonial_app/models/user_model.dart';
 import 'package:matrimonial_app/utils/app_constants.dart';
 import 'package:matrimonial_app/utils/preferences.dart';
 

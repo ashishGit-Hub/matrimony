@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:matrimonial_app/components/empty_item.dart';
 import 'package:matrimonial_app/core/constant/color_constant.dart';
 import 'package:matrimonial_app/features/match_module/model/match_model.dart';
 import 'package:matrimonial_app/features/match_module/view/receive_request.dart';
@@ -13,7 +14,7 @@ import 'Notinterested_screen.dart';
 import 'profiledetailscreen.dart';
 
 class MatchesScreen extends StatefulWidget {
-  const MatchesScreen({super.key});
+  const MatchesScreen({Key? key}) : super(key: key);
 
   @override
   State<MatchesScreen> createState() => _MatchesScreenState();
@@ -21,14 +22,12 @@ class MatchesScreen extends StatefulWidget {
 
 class _MatchesScreenState extends State<MatchesScreen>
     with TickerProviderStateMixin {
-  late TabController _tabController;
+  late final TabController _tabController;
   List<MatchModel> matches = [];
   bool isLoading = true;
-  List<MatchModel> sentRequests = [];
-  List<MatchModel> receivedRequests = [];
 
-
-  final List<String> preferences = [
+  // Preferences
+  static const preferences = [
     "All Matches",
     "Newly Joined",
     "Viewed You",
@@ -39,44 +38,21 @@ class _MatchesScreenState extends State<MatchesScreen>
     "Receive Request",
     "Accepted Request",
   ];
-  final Map<String, bool> selectedPreferences = {};
+  final selectedPreferences = <String, bool>{
+    for (var pref in preferences) pref: false,
+  };
 
   @override
   void initState() {
     super.initState();
     _tabController = TabController(length: 4, vsync: this);
-    _tabController.addListener(() {
-      setState(() {});
-    });
-
     fetchMatchData();
-
-    // Initialize preferences
-    for (var pref in preferences) {
-      selectedPreferences[pref] = false;
-    }
-
-    // Dummy Sent Requests
-    sentRequests = [
-      // MatchModel(name: "Priya Sharma", profile: "", status: "accepted"),
-      // MatchModel(name: "Ravi Kumar", profile: "", status: "rejected"),
-    ];
-
-    // Dummy Received Requests
-    receivedRequests = [
-      MatchModel(name: "Ankita Yadav", profile: ""),
-      MatchModel(name: "Raj Verma", profile: ""),
-    ];
   }
-
 
   Future<void> fetchMatchData() async {
     final matchProvider = Provider.of<MatchProvider>(context, listen: false);
-    final response = await matchProvider.getMatches(
-      stateId: "33",
-      cityId: "677",
-    );
-
+    final response =
+        await matchProvider.getMatches(stateId: "33", cityId: "677");
     if (response != null && response.status) {
       setState(() {
         matches = response.data ?? [];
@@ -97,202 +73,26 @@ class _MatchesScreenState extends State<MatchesScreen>
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
-      builder: (_) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-            top: 16,
-            left: 16,
-            right: 16,
-          ),
-          child: Wrap(
-            children: [
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 12),
-                  decoration: BoxDecoration(
-                    color: Colors.grey[400],
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const Text(
-                "Match Preference:",
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 10),
-              ...preferences.map((pref) {
-                return CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(pref),
-                  value: selectedPreferences[pref],
-                  onChanged: (bool? value) {
-                    setState(() {
-                      selectedPreferences[pref] = value ?? false;
-                    });
-                  },
-                );
-              }).toList(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  OutlinedButton(
-                    onPressed: () {
-                      setState(() {
-                        for (var key in selectedPreferences.keys) {
-                          selectedPreferences[key] = false;
-                        }
-                      });
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Clear"),
-                  ),
-                  ElevatedButton(
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.green,
-                    ),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
-                    child: const Text("Apply"),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 16),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-  Widget _buildSendTab() {
-    if (sentRequests.isEmpty) {
-      return const Center(child: Text("No sent requests"));
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: sentRequests.length,
-      itemBuilder: (context, index) {
-        final match = sentRequests[index];
-        final imagePath = "https://matrimony.sqcreation.site/${match.profile ?? ""}";
-        // final status = match.status?.toLowerCase() ?? "pending";
-        // final color = status == "accepted"
-        //     ? Colors.green
-        //     : status == "rejected"
-        //     ? Colors.red
-        //     : Colors.orange;
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 35,
-                backgroundImage: match.profile?.isNotEmpty == true
-                    ? NetworkImage(imagePath)
-                    : const AssetImage('assets/images/default_image.png') as ImageProvider,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(match.name ?? "--", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 6),
-                    // Text("Status: ${status.toUpperCase()}",
-                    //     style: TextStyle(color: color, fontWeight: FontWeight.w500)),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
-    );
-  }
-
-
-  Widget _buildReceiveTab() {
-    if (receivedRequests.isEmpty) {
-      return const Center(child: Text("No received requests"));
-    }
-
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: receivedRequests.length,
-      itemBuilder: (context, index) {
-        final match = receivedRequests[index];
-        final imagePath = "https://matrimony.sqcreation.site/${match.profile ?? ""}";
-
-        return Container(
-          margin: const EdgeInsets.only(bottom: 16),
-          padding: const EdgeInsets.all(12),
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [BoxShadow(color: Colors.black12, blurRadius: 6)],
-          ),
-          child: Row(
-            children: [
-              CircleAvatar(
-                radius: 35,
-                backgroundImage: match.profile?.isNotEmpty == true
-                    ? NetworkImage(imagePath)
-                    : const AssetImage('assets/images/default_image.png') as ImageProvider,
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(match.name ?? "--", style: const TextStyle(fontWeight: FontWeight.bold)),
-                    const SizedBox(height: 10),
-                    Row(
-                      children: [
-                        OutlinedButton(
-                          onPressed: () {
-                            // Accept logic
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Accepted ${match.name}")),
-                            );
-                          },
-                          child: const Text("Accept"),
-                        ),
-                        const SizedBox(width: 8),
-                        OutlinedButton(
-                          onPressed: () {
-                            // Reject logic
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("Rejected ${match.name}")),
-                            );
-                          },
-                          child: const Text("Reject"),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        );
-      },
+      builder: (_) => PreferenceBottomSheet(
+        preferences: preferences,
+        selectedPreferences: selectedPreferences,
+        onChanged: (key, value) {
+          setState(() => selectedPreferences[key] = value);
+        },
+        onClear: () {
+          setState(() {
+            for (var key in selectedPreferences.keys) {
+              selectedPreferences[key] = false;
+            }
+          });
+        },
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<MatchProvider>(builder: (context, matchProvider, child) {
+    return Consumer<MatchProvider>(builder: (context, matchProvider, _) {
       return Scaffold(
         backgroundColor: Colors.grey[100],
         appBar: AppBar(
@@ -301,7 +101,7 @@ class _MatchesScreenState extends State<MatchesScreen>
           elevation: 0,
           toolbarHeight: 0,
           bottom: PreferredSize(
-            preferredSize: Size.fromHeight(kToolbarHeight),
+            preferredSize: const Size.fromHeight(kToolbarHeight),
             child: TabBar(
               controller: _tabController,
               labelColor: Colors.white,
@@ -316,43 +116,137 @@ class _MatchesScreenState extends State<MatchesScreen>
             ),
           ),
         ),
-
         body: TabBarView(
           controller: _tabController,
           children: [
             isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : Padding(
-              padding: const EdgeInsets.all(16),
-              child: ListView.builder(
-                itemCount: matches.length,
-                itemBuilder: (context, index) {
-                  final match = matches[index];
-                  return _matchCard(match: match);
-                },
-              ),
-            ),
-            SendMatchesPage(),
-
-            // Use new ReceiveMatchesPage widget
-            ReceiveMatchesPage(),
-            NotInterestedpage()
+                : matches.isEmpty
+                    ? EmptyItem(
+                        title: "Your profile not matches with anyone!",
+                        subtitle: "Keep exploring! Update your preferences and check back later for new potential matches.",
+                        icon: Icons.people_outline)
+                    : Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: ListView.builder(
+                          itemCount: matches.length,
+                          itemBuilder: (context, index) => MatchCard(
+                              match: matches[index],
+                              onUpdate: () {
+                                setState(() {});
+                              },
+                              onRemove: () {
+                                setState(() {
+                                  matches.removeAt(index);
+                                });
+                              }),
+                        ),
+                      ),
+            const SendMatchesPage(),
+            const ReceiveMatchesPage(),
+            const NotInterestedPage(),
           ],
         ),
         floatingActionButton: _tabController.index == 0
             ? FloatingActionButton(
-          backgroundColor: Colors.orange,
-          onPressed: _showPreferenceBottomSheet,
-          child: const Icon(Icons.filter_alt),
-        )
+                backgroundColor: Colors.orange,
+                onPressed: _showPreferenceBottomSheet,
+                child: const Icon(Icons.filter_alt),
+              )
             : null,
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-
       );
     });
   }
+}
 
-  Widget _matchCard({required MatchModel match}) {
+class PreferenceBottomSheet extends StatelessWidget {
+  final List<String> preferences;
+  final Map<String, bool> selectedPreferences;
+  final void Function(String, bool) onChanged;
+  final VoidCallback onClear;
+
+  const PreferenceBottomSheet({
+    super.key,
+    required this.preferences,
+    required this.selectedPreferences,
+    required this.onChanged,
+    required this.onClear,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.only(
+        bottom: MediaQuery.of(context).viewInsets.bottom,
+        top: 16,
+        left: 16,
+        right: 16,
+      ),
+      child: Wrap(
+        children: [
+          Center(
+            child: Container(
+              width: 40,
+              height: 4,
+              margin: const EdgeInsets.only(bottom: 12),
+              decoration: BoxDecoration(
+                color: Colors.grey[400],
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+          const Text(
+            "Match Preference:",
+            style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+          ),
+          const SizedBox(height: 10),
+          ...preferences.map((pref) => CheckboxListTile(
+                contentPadding: EdgeInsets.zero,
+                title: Text(pref),
+                value: selectedPreferences[pref],
+                onChanged: (val) => onChanged(pref, val ?? false),
+              )),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              OutlinedButton(
+                onPressed: () {
+                  onClear();
+                  Navigator.pop(context);
+                },
+                child: const Text("Clear"),
+              ),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.green,
+                ),
+                onPressed: () => Navigator.pop(context),
+                child: const Text("Apply"),
+              ),
+            ],
+          ),
+          const SizedBox(height: 16),
+        ],
+      ),
+    );
+  }
+}
+
+class MatchCard extends StatelessWidget {
+  final MatchModel match;
+  final VoidCallback? onUpdate;
+  final VoidCallback? onRemove;
+
+  const MatchCard({
+    super.key,
+    required this.match,
+    this.onUpdate,
+    this.onRemove,
+  });
+
+  @override
+  Widget build(BuildContext context) {
     final imagePath =
         "https://matrimony.sqcreation.site/${match.profile ?? ""}";
 
@@ -373,12 +267,14 @@ class _MatchesScreenState extends State<MatchesScreen>
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (_) => ProfileDetailScreen(userId: match.id ?? ""),
+                      builder: (_) =>
+                          ProfileDetailScreen(userId: match.id ?? ""),
                     ),
                   );
                 },
                 child: ClipRRect(
-                  borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+                  borderRadius:
+                      const BorderRadius.vertical(top: Radius.circular(16)),
                   child: Image.network(
                     imagePath,
                     height: 200,
@@ -396,60 +292,12 @@ class _MatchesScreenState extends State<MatchesScreen>
               Positioned(
                 top: 10,
                 right: 10,
-                child: Column(
-                  children: [
-                    GestureDetector(
-                      onTap: () async {
-                        final token = Preferences.getString(AppConstants.token, defaultValue: "");
-                        final success = await MatchService.updateLikeUser(
-                          token: token!,
-                          likedId: match.id ?? "",
-                        );
-
-                        if (success) {
-                          setState(() {
-                            match.isLiked = !(match.isLiked ?? false);
-                            if (match.isLiked == true) {
-                              match.likes = (match.likes ?? 0) + 1;
-                            } else {
-                              match.likes = (match.likes ?? 1) - 1;
-                            }
-                          });
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(content: Text("Failed to update like")),
-                          );
-                        }
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: Colors.white,
-                        child: Icon(
-                          match.isLiked == true
-                              ? Icons.favorite
-                              : Icons.favorite_border,
-                          color: match.isLiked == true ? Colors.red : Colors.black,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text('${match.likes ?? 0}',
-                        style: const TextStyle(fontSize: 12, color: Colors.black)),
-                  ],
-                ),
+                child: _LikeButton(match: match, onUpdate: onUpdate),
               ),
-              Positioned(
+              const Positioned(
                 bottom: 10,
                 left: 10,
-                child: ClipPath(
-                  clipper: ChatBubbleClipper(),
-                  child: Container(
-                    color: Colors.white,
-                    padding:
-                    const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-                    child: const Text("Last seen 2m ago",
-                        style: TextStyle(fontSize: 12)),
-                  ),
-                ),
+                child: _ChatBubble(text: "Last seen 2m ago"),
               ),
             ],
           ),
@@ -459,21 +307,21 @@ class _MatchesScreenState extends State<MatchesScreen>
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(match.name ?? "",
-                    style:
-                    const TextStyle(fontWeight: FontWeight.bold, fontSize: 14)),
+                    style: const TextStyle(
+                        fontWeight: FontWeight.bold, fontSize: 14)),
                 const SizedBox(height: 4),
                 Wrap(
                   spacing: 18,
                   runSpacing: 12,
                   children: [
-                    _infoItem('assets/images/age.png',
-                        '${match.age ?? "--"} yrs'),
-                    _infoItem('assets/images/age.png',
-                        '${match.height ?? "--"} cm'),
-                    _infoItem('assets/images/age.png',
-                        match.education?.name ?? "--"),
-                    _infoItem('assets/images/age.png',
-                        match.city?.name ?? "--"),
+                    _infoItem(
+                        'assets/images/age.png', '${match.age ?? "--"} yrs'),
+                    _infoItem(
+                        'assets/images/age.png', '${match.height ?? "--"} cm'),
+                    _infoItem(
+                        'assets/images/age.png', match.education?.name ?? "--"),
+                    _infoItem(
+                        'assets/images/age.png', match.city?.name ?? "--"),
                     _infoItem('assets/images/age.png',
                         match.occupation?.name ?? "--"),
                   ],
@@ -487,23 +335,20 @@ class _MatchesScreenState extends State<MatchesScreen>
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () async {
-                          final token =
-                          Preferences.getString("token", defaultValue: "");
                           final provider = Provider.of<MatchProvider>(context,
                               listen: false);
                           bool success = await provider.sendInterest(
-                              token: token, userId: match.id ?? "");
+                              userId: match.id ?? "");
 
                           if (success) {
-                            setState(() {
-                              matches.remove(match);
-                            });
+                            onRemove?.call();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("✅ Interest sent")),
+                              const SnackBar(content: Text("✅ Interest sent")),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("❌ Failed to send interest")),
+                              const SnackBar(
+                                  content: Text("❌ Failed to send interest")),
                             );
                           }
                         },
@@ -511,29 +356,27 @@ class _MatchesScreenState extends State<MatchesScreen>
                             style: TextStyle(color: ColorConstant.black)),
                       ),
                     ),
-                    SizedBox(width: 10),
+                    const SizedBox(width: 10),
                     Expanded(
                       child: OutlinedButton(
                         onPressed: () async {
                           final token =
-                          Preferences.getString("token", defaultValue: "");
+                              Preferences.getString("token", defaultValue: "");
                           final provider = Provider.of<MatchProvider>(context,
                               listen: false);
                           bool success = await provider.sendNotInterested(
                               token: token, userId: match.id ?? "");
 
                           if (success) {
-                            setState(() {
-                              matches.remove(match);
-                            });
+                            onRemove?.call();
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(content: Text("🚫 Not Interested")),
+                              const SnackBar(content: Text("Not Interested")),
                             );
                           } else {
                             ScaffoldMessenger.of(context).showSnackBar(
-                              SnackBar(
+                              const SnackBar(
                                   content:
-                                  Text("❌ Failed to send not interested")),
+                                      Text("Failed to send not interested")),
                             );
                           }
                         },
@@ -543,7 +386,6 @@ class _MatchesScreenState extends State<MatchesScreen>
                     ),
                   ],
                 ),
-
               ],
             ),
           ),
@@ -552,7 +394,7 @@ class _MatchesScreenState extends State<MatchesScreen>
     );
   }
 
-  Widget _infoItem(String imagePath, String text) {
+  static Widget _infoItem(String imagePath, String text) {
     return Row(
       mainAxisSize: MainAxisSize.min,
       children: [
@@ -560,6 +402,83 @@ class _MatchesScreenState extends State<MatchesScreen>
         const SizedBox(width: 5),
         Text(text, style: TextStyle(color: Colors.grey[700])),
       ],
+    );
+  }
+}
+
+class _LikeButton extends StatefulWidget {
+  final MatchModel match;
+  final VoidCallback? onUpdate;
+
+  const _LikeButton({required this.match, this.onUpdate});
+
+  @override
+  State<_LikeButton> createState() => _LikeButtonState();
+}
+
+class _LikeButtonState extends State<_LikeButton> {
+  bool isLiking = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final match = widget.match;
+    return Column(
+      children: [
+        GestureDetector(
+          onTap: isLiking
+              ? null
+              : () async {
+                  setState(() => isLiking = true);
+                  final token = Preferences.getString(AppConstants.token,
+                      defaultValue: "");
+                  final success = await MatchService.updateLikeUser(
+                    token: token,
+                    likedId: match.id ?? "",
+                  );
+
+                  if (success) {
+                    setState(() {
+                      match.isLiked = !(match.isLiked ?? false);
+                      match.likes =
+                          (match.likes ?? 0) + (match.isLiked == true ? 1 : -1);
+                    });
+                    widget.onUpdate?.call();
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(content: Text("Failed to update like")),
+                    );
+                  }
+                  setState(() => isLiking = false);
+                },
+          child: CircleAvatar(
+            backgroundColor: Colors.white,
+            child: Icon(
+              match.isLiked == true ? Icons.favorite : Icons.favorite_border,
+              color: match.isLiked == true ? Colors.red : Colors.black,
+            ),
+          ),
+        ),
+        const SizedBox(height: 4),
+        Text('${match.likes ?? 0}',
+            style: const TextStyle(fontSize: 12, color: Colors.black)),
+      ],
+    );
+  }
+}
+
+class _ChatBubble extends StatelessWidget {
+  final String text;
+  const _ChatBubble({required this.text});
+
+  @override
+  Widget build(BuildContext context) {
+    return ClipPath(
+      clipper: ChatBubbleClipper(),
+      child: Container(
+        color: Colors.white,
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+        child: Text(text, style: const TextStyle(fontSize: 12)),
+      ),
     );
   }
 }

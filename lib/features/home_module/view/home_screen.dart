@@ -37,6 +37,7 @@ class _HomeScreenState extends State<HomeScreen> {
     });
   }
 
+  @override
   Widget build(BuildContext context) {
 
 
@@ -51,20 +52,19 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       key: _scaffoldKey,
       drawer: const ProfileDrawer(),
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.grey[100],
       body: screens[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Colors.white,
         currentIndex: _currentIndex,
         selectedItemColor: Colors.orange,
         unselectedItemColor: Colors.grey,
         showUnselectedLabels: true,
         onTap: (index) => setState(() => _currentIndex = index),
         items: const [
-          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home"),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Matches"),
-          BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chat"),
-          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting"),
+          BottomNavigationBarItem(icon: Icon(Icons.home), label: "Home", backgroundColor: Colors.white),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite), label: "Matches", backgroundColor: Colors.white),
+          BottomNavigationBarItem(icon: Icon(Icons.chat), label: "Chat", backgroundColor: Colors.white),
+          BottomNavigationBarItem(icon: Icon(Icons.settings), label: "Setting", backgroundColor: Colors.white),
         ],
       ),
     );

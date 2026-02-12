@@ -17,7 +17,8 @@ class ChatDetailScreen extends StatefulWidget {
   final String name;
   final String? image;
 
-  const ChatDetailScreen({super.key,
+  const ChatDetailScreen({
+    super.key,
     required this.chatUserId,
     required this.name,
     this.image,
@@ -36,7 +37,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) async {
-      Provider.of<ChatProvider>(context, listen: false).loadMessages(widget.chatUserId);
+      Provider.of<ChatProvider>(context, listen: false)
+          .loadMessages(widget.chatUserId);
     });
   }
 
@@ -54,10 +56,11 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
     final requestBody = {
       "message": text,
-      "receiver_id": widget.chatUserId, // Replace this with actual receiver id if dynamic
+      "receiver_id":
+          widget.chatUserId, // Replace this with actual receiver id if dynamic
     };
     final token = Preferences.getString(AppConstants.token, defaultValue: "");
-    if(token.isEmpty){
+    if (token.isEmpty) {
       throw Exception('Token not found');
     }
 
@@ -79,17 +82,17 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
         final msg = data['data'];
 
         Provider.of<ChatProvider>(context, listen: false).messageList.add(
-          ChatUserModel(
-              chatUserid: msg['id'].toString(),
-            senderId: msg['sender_id']?.toString() ?? '',
-            receiverId: msg['receiver_id']?.toString() ?? '',
-            name: widget.name,
-            image: widget.image,
-            lastMessage: msg['message'],
-            time: msg['created_at'],
-            unreadCount: 0,
-          ),
-        );
+              ChatUserModel(
+                chatUserid: msg['id'].toString(),
+                senderId: msg['sender_id']?.toString() ?? '',
+                receiverId: msg['receiver_id']?.toString() ?? '',
+                name: widget.name,
+                image: widget.image,
+                lastMessage: msg['message'],
+                time: msg['created_at'],
+                unreadCount: 0,
+              ),
+            );
 
         _controller.clear();
         setState(() {});
@@ -111,13 +114,15 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
     return Align(
       alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
       child: Row(
-        mainAxisAlignment: isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
+        mainAxisAlignment:
+            isMe ? MainAxisAlignment.end : MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.end,
         children: [
           if (!isMe)
             CircleAvatar(
               radius: 16,
-              backgroundImage: widget.image != null ? NetworkImage(widget.image!) : null,
+              backgroundImage:
+                  widget.image != null ? NetworkImage(widget.image!) : null,
               backgroundColor: Colors.grey[300],
               child: widget.image == null
                   ? const Icon(Icons.person, size: 16, color: Colors.white)
@@ -127,22 +132,28 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           Container(
             margin: const EdgeInsets.symmetric(vertical: 4),
             padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            constraints: BoxConstraints(maxWidth: MediaQuery.of(context).size.width * 0.7),
+            constraints: BoxConstraints(
+                maxWidth: MediaQuery.of(context).size.width * 0.7),
             decoration: BoxDecoration(
               color: isMe ? Colors.orangeAccent[100] : Colors.grey[200],
               borderRadius: BorderRadius.only(
                 topLeft: const Radius.circular(12),
                 topRight: const Radius.circular(12),
-                bottomLeft: isMe ? const Radius.circular(12) : const Radius.circular(0),
-                bottomRight: isMe ? const Radius.circular(0) : const Radius.circular(12),
+                bottomLeft:
+                    isMe ? const Radius.circular(12) : const Radius.circular(0),
+                bottomRight:
+                    isMe ? const Radius.circular(0) : const Radius.circular(12),
               ),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
-                Text(msg.lastMessage, style: const TextStyle(fontSize: 16, color: Colors.black)),
+                Text(msg.lastMessage,
+                    style: const TextStyle(fontSize: 16, color: Colors.black)),
                 const SizedBox(height: 4),
-                Text(time, style: const TextStyle(fontSize: 10, color: Colors.black54)),
+                Text(time,
+                    style:
+                        const TextStyle(fontSize: 10, color: Colors.black54)),
               ],
             ),
           ),
@@ -153,9 +164,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
-
-    return Consumer<ChatProvider>(builder: (context,provider, child){
-     return Scaffold(
+    return Consumer<ChatProvider>(builder: (context, provider, child) {
+      return Scaffold(
         backgroundColor: const Color(0xffece5dd),
         appBar: AppBar(
           backgroundColor: Colors.orange,
@@ -163,7 +173,8 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
           title: Row(
             children: [
               CircleAvatar(
-                backgroundImage: widget.image != null ? NetworkImage(widget.image!) : null,
+                backgroundImage:
+                    widget.image != null ? NetworkImage(widget.image!) : null,
                 backgroundColor: Colors.grey[300],
                 child: widget.image == null
                     ? const Icon(Icons.person, color: Colors.white)
@@ -173,15 +184,29 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(widget.name, style: const TextStyle(fontSize: 18, color: Colors.white)),
-                  Text("Online", style: AppTextStyle.semiBoldInterText(fontSize: 12, color: Colors.white70)),
+                  Text(
+                      widget.name
+                          .split(' ')
+                          .map((word) => word.isEmpty
+                              ? ''
+                              : '${word[0].toUpperCase()}${word.substring(1)}')
+                          .join(' '),
+                      style:
+                          const TextStyle(fontSize: 18, color: Colors.white)),
+                  Text("Online",
+                      style: AppTextStyle.semiBoldInterText(
+                          fontSize: 12, color: Colors.white70)),
                 ],
               ),
             ],
           ),
           actions: [
-            IconButton(icon: const Icon(Icons.videocam, color: Colors.white), onPressed: () {}),
-            IconButton(icon: const Icon(Icons.call, color: Colors.white), onPressed: () {}),
+            IconButton(
+                icon: const Icon(Icons.videocam, color: Colors.white),
+                onPressed: () {}),
+            IconButton(
+                icon: const Icon(Icons.call, color: Colors.white),
+                onPressed: () {}),
           ],
         ),
         body: Column(
@@ -190,16 +215,19 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
               child: provider.isLoadingMessages
                   ? const Center(child: CircularProgressIndicator())
                   : ListView.builder(
-                reverse: true,
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                itemCount: provider.messageList.length,
-                itemBuilder: (context, index) {
-                  final reversedIndex = provider.messageList.length - 1 - index;
-                  final msg = provider.messageList[reversedIndex];
-                  final isMe = msg.senderId.toString() != widget.chatUserId;
-                  return buildMessage(msg, isMe);
-                },
-              ),
+                      reverse: true,
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 8),
+                      itemCount: provider.messageList.length,
+                      itemBuilder: (context, index) {
+                        final reversedIndex =
+                            provider.messageList.length - 1 - index;
+                        final msg = provider.messageList[reversedIndex];
+                        final isMe =
+                            msg.senderId.toString() != widget.chatUserId;
+                        return buildMessage(msg, isMe);
+                      },
+                    ),
             ),
             const Divider(height: 1),
             Container(
@@ -209,12 +237,14 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                 crossAxisAlignment: CrossAxisAlignment.end,
                 children: [
                   IconButton(
-                    icon: const Icon(Icons.emoji_emotions_outlined, color: Colors.grey),
+                    icon: const Icon(Icons.emoji_emotions_outlined,
+                        color: Colors.grey),
                     onPressed: () {},
                   ),
                   Expanded(
                     child: ConstrainedBox(
-                      constraints: const BoxConstraints(minHeight: 40, maxHeight: 120),
+                      constraints:
+                          const BoxConstraints(minHeight: 40, maxHeight: 120),
                       child: Scrollbar(
                         child: TextField(
                           controller: _controller,
@@ -223,13 +253,16 @@ class _ChatDetailScreenState extends State<ChatDetailScreen> {
                           decoration: const InputDecoration(
                             hintText: "Type a message",
                             border: InputBorder.none,
-                            contentPadding: EdgeInsets.symmetric(horizontal: 10, vertical: 10),
+                            contentPadding: EdgeInsets.symmetric(
+                                horizontal: 10, vertical: 10),
                           ),
                         ),
                       ),
                     ),
                   ),
-                  IconButton(icon: const Icon(Icons.camera_alt, color: Colors.grey), onPressed: () {}),
+                  IconButton(
+                      icon: const Icon(Icons.camera_alt, color: Colors.grey),
+                      onPressed: () {}),
                   IconButton(
                     icon: const Icon(Icons.send, color: Colors.orange),
                     onPressed: _sending ? null : sendMessage,

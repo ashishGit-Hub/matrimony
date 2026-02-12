@@ -18,6 +18,7 @@ class AppConstants{
   static const String updateGallery = '/update-gallery';
   static const String chatUserList = '$apiBaseUrl/user/chat/list';
   static const String cityList = '$apiBaseUrl/get/city/list/';
+  static const String revokeInterestRequest = '$apiBaseUrl/interests/revoke/';
 
 
 

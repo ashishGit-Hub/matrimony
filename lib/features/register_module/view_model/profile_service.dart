@@ -1,8 +1,6 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-
-
-import 'package:matrimonial_app/features/register_module/model/registration_response.dart';
+import 'package:matrimonial_app/models/user_model.dart';
 
 class ProfileForService {
   Future<List<ProfileFor>> fetchProfileOptions() async {

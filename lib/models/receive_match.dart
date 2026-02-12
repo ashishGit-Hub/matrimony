@@ -8,7 +8,7 @@ class ReceiveInterest {
   final MatchModel sender;
   ReceiveInterest(
       {
-        required this.interestId,
+      required this.interestId,
       required this.status,
       required this.senderId,
       required this.receiverId,

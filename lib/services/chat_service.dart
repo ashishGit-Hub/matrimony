@@ -22,7 +22,8 @@ class ChatService {
 
     if (response.statusCode == 200) {
       if(kDebugMode){
-        log(response.body);
+        log("URl: $url");
+        log("Response Body: ${response.body}");
       }
       final  jsonData = jsonDecode(response.body);
       if (jsonData != null) {
