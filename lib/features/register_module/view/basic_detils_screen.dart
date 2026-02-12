@@ -100,7 +100,7 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
             systemOverlayStyle: SystemUiOverlayStyle.light,
             leading: widget.isRegisteredScreen ? null : BackButton(color: Colors.black),
             elevation: 0,
-            backgroundColor: Colors.white,
+            backgroundColor: Colors.orange,
             title: const Text("Basic Details",
                 style: TextStyle(color: Colors.black)),
             centerTitle: true,
@@ -159,7 +159,7 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
                 ElevatedButton(
                   onPressed: _handleSubmit,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: Colors.orange,
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: Text(
@@ -187,7 +187,7 @@ class _BasicDetailsScreenState extends State<BasicDetailsScreen> {
                 value: 0.2,
                 strokeWidth: 4,
                 backgroundColor: Colors.grey[300],
-                valueColor: const AlwaysStoppedAnimation(Colors.green),
+                valueColor: const AlwaysStoppedAnimation(Colors.orange),
               ),
             ),
             const Text("1 of 5", style: TextStyle(fontSize: 12)),

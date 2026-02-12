@@ -140,7 +140,7 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
         systemOverlayStyle: SystemUiOverlayStyle.light,
         scrolledUnderElevation: 0,
         leading: BackButton(color: Colors.black),
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.orange,
         elevation: 0,
         title: Text("Professional Details", style: TextStyle(color: Colors.black)),
         centerTitle: true,
@@ -214,7 +214,7 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
         child: ElevatedButton(
           onPressed: isLoading ? null : _submit,
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.orange,
             minimumSize: Size(double.infinity, 50),
           ),
           child: isLoading
@@ -238,7 +238,7 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
                 value: 0.8,
                 strokeWidth: 4,
                 backgroundColor: Colors.grey[300],
-                valueColor: AlwaysStoppedAnimation(Colors.green),
+                valueColor: AlwaysStoppedAnimation(Colors.orange),
               ),
             ),
             Text("4 of 5", style: TextStyle(fontSize: 12)),
@@ -251,7 +251,7 @@ class ProfessionalDetailsScreenState extends State<ProfessionalDetailsScreen> {
             Text("Professional Details",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Text("Next Step: About Yourself", style: TextStyle(color: Colors.grey)),
-            Text("Prev. Step: Personal Details", style: TextStyle(color: Colors.green, fontSize: 12)),
+            Text("Prev. Step: Personal Details", style: TextStyle(color: Colors.grey, fontSize: 12)),
           ],
         ),
       ],

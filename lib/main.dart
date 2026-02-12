@@ -4,6 +4,7 @@ import 'package:matrimonial_app/core/firebase/firebase_notification_service.dart
 import 'package:matrimonial_app/firebase_options.dart';
 import 'package:matrimonial_app/providers/auth_provider.dart';
 import 'package:matrimonial_app/providers/chat_provider.dart';
+import 'package:matrimonial_app/providers/home_provider.dart';
 import 'package:matrimonial_app/providers/match_provider.dart';
 import 'package:matrimonial_app/providers/notification_provider.dart';
 import 'package:matrimonial_app/providers/user_provider.dart';
@@ -39,6 +40,7 @@ class MyApp extends StatelessWidget {
           ChangeNotifierProvider<UserProvider>(create: (context) => UserProvider()),
           ChangeNotifierProvider(create: (_) => ChatProvider()),
           ChangeNotifierProvider(create: (_) => NotificationProvider()),
+          ChangeNotifierProvider(create: (_) => HomeProvider()),
         ],
         child: MaterialApp(
           home: SplashScreen(),

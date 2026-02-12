@@ -1,12 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:matrimonial_app/features/home_module/view_model/change_password_service.dart';
-
 import '../../../utils/app_constants.dart';
 import '../../../utils/preferences.dart'; // your token service
 
 class ChangePasswordScreen extends StatefulWidget {
   const ChangePasswordScreen({super.key});
-
   @override
   State<ChangePasswordScreen> createState() => _ChangePasswordScreenState();
 }
@@ -24,7 +22,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
 
   Future<void> _submitChange() async {
     if (!_formKey.currentState!.validate()) return;
-
     setState(() => _isLoading = true);
 
     final token = Preferences.getString(AppConstants.token, defaultValue: "");
@@ -53,7 +50,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
       Navigator.pop(context);
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(response['message'] ?? 'Something went wrong')),
+        SnackBar(content: Text(response['message'] ?? 'invalid Old Password')),
       );
     }
   }
@@ -62,6 +59,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text("Change Password"), backgroundColor: Colors.orange),
+      backgroundColor: Colors.white,
       body: Padding(
         padding: const EdgeInsets.all(16),
         child: Form(
@@ -84,7 +82,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 value == null || value.isEmpty ? 'Enter current password' : null,
               ),
               const SizedBox(height: 16),
-
               // New password
               TextFormField(
                 controller: _newPasswordController,
@@ -122,7 +119,6 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                 },
               ),
               const SizedBox(height: 30),
-
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -133,7 +129,7 @@ class _ChangePasswordScreenState extends State<ChangePasswordScreen> {
                   ),
                   child: _isLoading
                       ? const CircularProgressIndicator(color: Colors.white)
-                      : const Text("Change Password"),
+                      : const Text("Change Password", style: TextStyle(fontSize: 16, color: Colors.black)),
                 ),
               ),
             ],

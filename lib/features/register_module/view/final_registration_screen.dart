@@ -113,6 +113,7 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
   Widget build(BuildContext context) {
     return Consumer<UserProvider>(builder: (context, userProvider, child) {
       return Scaffold(
+        backgroundColor: Colors.white,
         appBar: AppBar(
           title: const Text("Gallery"),
           backgroundColor: Colors.orange,
@@ -202,7 +203,7 @@ class _FinalStepScreenState extends State<FinalStepScreen> {
                 child: ElevatedButton(
                   onPressed: () => uploadImages(userProvider),
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
+                    backgroundColor: Colors.orange,
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
                   child: _isUploading
