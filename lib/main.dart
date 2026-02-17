@@ -16,15 +16,21 @@ import 'package:provider/provider.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Preferences.initPref();
+
+  // Initialize Firebase first
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform
+  );
+  await FirebaseNotificationService().initNotification();
+
+  // Request permissions after Firebase is ready
+  await Future.delayed(Duration(milliseconds: 500));
   await Permission.notification.isDenied.then((value) {
     if (value) {
       Permission.notification.request();
     }
   });
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform
-  );
-  await FirebaseNotificationService().initNotification();
+
   runApp(MyApp());
 }
 

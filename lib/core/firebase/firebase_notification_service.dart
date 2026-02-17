@@ -33,7 +33,7 @@ class FirebaseNotificationService {
       android: androidSettings,
     );
 
-    await _localNotifications.initialize(initSettings);
+    await _localNotifications.initialize(settings: initSettings);
   }
 
   void _setupFirebaseMessageHandlers() {
@@ -68,10 +68,10 @@ class FirebaseNotificationService {
     );
 
     _localNotifications.show(
-      0,
-      message.notification?.title ?? 'No Title',
-      message.notification?.body ?? 'No Body',
-      notificationDetails,
+      id:0,
+      title: message.notification?.title ?? 'No Title',
+      body: message.notification?.body ?? 'No Body',
+      notificationDetails: notificationDetails,
     );
   }
 }
